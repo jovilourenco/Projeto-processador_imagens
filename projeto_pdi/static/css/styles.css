@@ -1,0 +1,33 @@
+/* Estilo para manter as seções com cara de "box" do protótipo */
+.section-box {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.canvas-area {
+    min-height: 350px;
+    border: 2px dashed #dee2e6;
+    background-color: #fafafa !important;
+}
+
+.scrollable-panel {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Ajuste de sliders para parecerem mais profissionais */
+.form-range {
+    height: 1.5rem;
+}
+
+/* Identidade visual de cada bloco baseada na imagem */
+.border-warning { border: 2px solid #f9cb9c !important; } /* Opções Arquivo */
+.border-success { border: 2px solid #a2c4c9 !important; } /* Seleção Processos */
+.border-primary { border: 2px solid #a4c2f4 !important; } /* Entrada */
+.border-danger  { border: 2px solid #f4cccc !important; } /* Saída */
+.border-info    { border: 2px solid #ffe599 !important; } /* Parâmetros */
+
+.bg-primary { background-color: #a4c2f4 !important; color: black !important; }
+.bg-danger  { background-color: #ea9999 !important; color: black !important; }
+.bg-success { background-color: #76a5af !important; color: white !important; }
+.bg-info    { background-color: #ffd966 !important; color: black !important; }
