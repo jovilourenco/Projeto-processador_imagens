@@ -1,0 +1,13 @@
+# Ambiente Virtual
+venv/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+
+# Ignora arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Banco de dados local do Django
+db.sqlite3
