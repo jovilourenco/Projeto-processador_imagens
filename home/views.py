@@ -46,11 +46,18 @@ def processar_imagem(request):
 
             #Transformação Logarítmica: s = c * log(1 + r)
             elif process_type == 'log':
-                # Normalizamos para float para evitar overflow
-                c = 255 / np.log(1 + np.max(img))
-                log_image = c * (np.log(1 + img.astype(np.float32)))
-                result = np.array(log_image, dtype=np.uint8)
+                # define um imagem float
+                img_float = img.astype(np.float32)
 
+                # Normaliza
+                img_norm = img_float / 255.0
+                
+                # Aplica o log
+                log_image = np.log1p(img_norm)
+
+                # Deixa o intervalo entre 0 - 255
+                log_image = log_image / np.max(log_image)
+                result = np.uint8(log_image * 255) # img_float/255 * 255 = img_float (porem alterada com o log)
             #Filtro Passa-Baixa Gaussiano
             elif process_type == 'gaussian':
                 s = int(params.get('s', 1))
