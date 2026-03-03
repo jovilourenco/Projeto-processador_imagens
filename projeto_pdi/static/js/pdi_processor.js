@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <label class="form-label small">Limiar (k): 
-                        <input type="number" min="0" max="255" id="val_k" value="127" 
+                        <input type="number" min="0" max="255" id="val_k" class="pdi-ctrl" value="127" 
                             oninput="document.getElementById('param_k').value = this.value">
                     </label>
                     <input type="range" class="form-range pdi-ctrl" id="param_k" min="0" max="255" value="127" 
@@ -95,10 +95,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.addEventListener('input', function (e) {
         if (e.target.classList.contains('pdi-ctrl')) {
-            // Se o range mudar, atualiza o campo numérico correspondente
-            // Assumindo que o ID do input seja 'val_' + o resto do ID do range
-            const numberInput = document.getElementById('val_' + e.target.id.split('_')[1]);
-            if (numberInput) numberInput.value = e.target.value;
+            // sincroniza o range e o número selecionado
+            const sufix = e.target.id.split("_")[1];
+            const numInput = document.getElementById('val_' + sufix);
+            const rangeInput = document.getElementById('param' + sufix);
+
+            if(e.target.type === 'number' && rangeInput){
+                rangeInput.value = e.target.value;
+            } else if(e.target.type === 'range' && numInput) {
+                numInput.value = e.target.value;
+            }
+
+            processImage(); // Atualiza para os dois casos
         }
     });
 
