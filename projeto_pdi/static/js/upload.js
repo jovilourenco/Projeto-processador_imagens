@@ -151,6 +151,9 @@
 
         if (!uploadModal || !uploadZone || !imageInput) return;
 
+        // Obter ou criar uma única instância do modal (compatível com pdi_processor.js)
+        var modalInstance = bootstrap.Modal.getInstance(uploadModal) || new bootstrap.Modal(uploadModal);
+
         // Clicar na zona: abre o explorador de arquivos (input oculto)
         uploadZone.addEventListener('click', function(e) {
             if (e.target.closest('.btn-close') || e.target.closest('[data-bs-dismiss="modal"]')) return;
@@ -206,7 +209,7 @@
                     const file = items[i].getAsFile();
                     // Se o modal não está aberto, abre; caso contrário, apenas processa
                     if (!uploadModal.classList.contains('show')) {
-                        new bootstrap.Modal(uploadModal).show();
+                        modalInstance.show();
                         setTimeout(() => processFile(file), 150);
                     } else {
                         processFile(file);
@@ -229,7 +232,7 @@
             
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
-                new bootstrap.Modal(uploadModal).show();
+                modalInstance.show();
                 setTimeout(() => processFile(file), 150);
             }
         });
@@ -242,8 +245,7 @@
                     showError('Selecione um arquivo PNG ou JPEG.');
                     return;
                 }
-                var modal = bootstrap.Modal.getInstance(uploadModal);
-                if (modal) modal.hide();
+                modalInstance.hide();
                 resetModalState();
                 var btnLoad = byId('btnLoad');
                 if (btnLoad) btnLoad.click();
