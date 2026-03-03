@@ -22,6 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const imgIn = document.getElementById('imgInput');
     const imgOut = document.getElementById('imgOutput');
     const paramsDiv = document.getElementById('paramsContainer');
+    
+    /* verificam o campo de imagem original para que quando copiado 
+     alguma coisa abra o modal */
+    const panelInput = document.getElementById('panelInput');
+    const uploadModalEl = document.getElementById('uploadModal');
+    const bootstrapModal = new bootstrap.Modal(uploadModalEl);
+
+    // Listener ao input do usuário 
+    panelInput.addEventListener('click', () => {
+        bootstrapModal.show();
+    });
 
     // Gatilho para a imagem original (envio de metadatas dimensões e tipo)
     imgIn.onload = function() {

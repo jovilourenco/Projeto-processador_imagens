@@ -156,11 +156,20 @@
             if (e.target.closest('.btn-close') || e.target.closest('[data-bs-dismiss="modal"]')) return;
             imageInput.click();
         });
+        
 
-        uploadZone.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
+        // Atalho de teclado no modal: Enter para confirmar ou abrir explorador
+        uploadModal.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
                 e.preventDefault();
-                imageInput.click();
+                var hasImage = imageInput.files && imageInput.files.length > 0 && isImage(imageInput.files[0]);
+                if (hasImage) {
+                    // Tem imagem → confirma
+                    if (btnConfirm) btnConfirm.click();
+                } else {
+                    // Sem imagem → abre explorador
+                    imageInput.click();
+                }
             }
         });
 
@@ -190,18 +199,38 @@
         });
 
         // Colar (Ctrl+V) no documento/modal
-        document.addEventListener('paste', function(e) {
-            if (!uploadModal.classList.contains('show')) return;
-            var items = (e.clipboardData && e.clipboardData.items) || [];
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].kind === 'file') {
-                    var file = items[i].getAsFile();
-                    if (file && file.type.indexOf('image/') === 0) {
-                        e.preventDefault();
+        document.addEventListener('paste', (e) => {
+            const items = (e.clipboardData && e.clipboardData.items) || [];
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                    const file = items[i].getAsFile();
+                    // Se o modal não está aberto, abre; caso contrário, apenas processa
+                    if (!uploadModal.classList.contains('show')) {
+                        new bootstrap.Modal(uploadModal).show();
+                        setTimeout(() => processFile(file), 150);
+                    } else {
                         processFile(file);
                     }
                     break;
                 }
+            }
+        });
+
+        // Captura de Arrastar (Drag) sobre a área central
+        const mainArea = document.querySelector('.pdi-main');
+        mainArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            mainArea.classList.add('pdi-drag-active'); // Opcional: estilo visual
+        });
+
+        mainArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            mainArea.classList.remove('pdi-drag-active');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                new bootstrap.Modal(uploadModal).show();
+                setTimeout(() => processFile(file), 150);
             }
         });
 
