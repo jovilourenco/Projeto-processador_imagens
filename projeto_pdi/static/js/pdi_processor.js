@@ -23,6 +23,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const imgOut = document.getElementById('imgOutput');
     const paramsDiv = document.getElementById('paramsContainer');
 
+    // Gatilho para a imagem original (envio de metadatas dimensões e tipo)
+    imgIn.onload = function() {
+        if (imgIn.src && imgIn.src !== window.location.href) {
+            atualizarMetaDados(imgIn, 'metaInput', imageInput.files[0]);
+        }
+    };
+
+    // Gatilho para a imagem processada
+    imgOut.onload = function() {
+        if (imgOut.src && imgOut.src.startsWith('data:image/')) {
+            atualizarMetaDados(imgOut, 'metaOutput');
+        }
+    };
+
     // Configuração de controles por processo
     const configs = {
         'original': () => `<p class="text-muted mb-0">Exibindo imagem original.</p>`,
@@ -133,6 +147,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (err) { 
             console.error("Erro no processamento:", err); 
+        }
+    }
+
+    // Atualiza meta dados das imagens de input e output
+    function atualizarMetaDados(imgElement, displayElementId, file = null) {
+        const displayElement = document.getElementById(displayElementId);
+        if (!displayElement) return;
+
+        // Usamos naturalWidth para pegar o tamanho real do arquivo, não o tamanho exibido na tela
+        const largura = imgElement.naturalWidth || 0;
+        const altura = imgElement.naturalHeight || 0;
+        
+        let tipo = "Desconhecido";
+
+        if (file && file.type) {
+            tipo = file.type.split('/')[1].toUpperCase();
+        } else if (imgElement.src.startsWith('data:image/')) {
+            // Extrai o tipo de uma string base64: "data:image/png;base64,..."
+            tipo = imgElement.src.split(';')[0].split('/')[1].toUpperCase();
+        }
+
+        if (largura > 0) {
+            displayElement.innerHTML = `Dimensões: <b>${largura}x${altura}</b> | Tipo: <b>${tipo}</b>`;
         }
     }
 

@@ -27,6 +27,10 @@
             document.getElementById('placeholderOutput').classList.remove('d-none');
         }
 
+        // Limpa os metadados das imagens
+        document.getElementById('metaInput').innerHTML = "Dimensões: - | Tipo: -";
+        document.getElementById('metaOutput').innerHTML = "Dimensões: - | Tipo: -";
+
         // Limpa histogramas (se existirem dentro da section accessoryData)
         const accessoryData = document.getElementById('accessoryData');
         if (accessoryData) {
