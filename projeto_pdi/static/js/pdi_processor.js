@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btnLoad').addEventListener('click', () => {
         const file = imageInput.files[0];
         if (file) {
-            if (file.type !== "image/png") { // Valida se é png
-            alert("Por favor, selecione apenas arquivos PNG.");
+            if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/jpg") { // Valida se é png
+            alert("Por favor, selecione apenas arquivos PNG e JPEG.");
             imageInput.value = "";
             return;
             }

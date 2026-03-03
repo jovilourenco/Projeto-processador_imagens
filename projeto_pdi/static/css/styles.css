@@ -365,15 +365,65 @@
     filter: invert(1);
 }
 
+/* Corrigindo a cor dos textos e títulos dentro do modal */
+.pdi-modal-content .modal-title {
+    color: var(--pdi-text);
+    font-weight: 600;
+}
+
+/* Força o text-muted do Bootstrap a ser mais claro no nosso fundo escuro */
+.pdi-modal-content .text-muted {
+    color: #cbd5e1 !important; 
+}
+
+/* Área de Upload (Estilo semelhante ao Canvas Principal) */
 .pdi-upload-zone {
     background-color: var(--pdi-bg-main);
-    border: 2px dashed var(--pdi-border) !important;
+    border: 2px dashed var(--pdi-accent) !important; /* Borda azul para chamar atenção */
     cursor: pointer;
-    transition: background-color 0.15s, border-color 0.15s;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* Destaque para o ícone e o texto dentro da área de upload */
+.pdi-upload-zone i {
+    color: var(--pdi-accent) !important; /* Ícone azul */
+}
+
+.pdi-upload-zone span {
+    color: var(--pdi-text) !important; /* Texto branco */
+    font-weight: 500;
 }
 
 .pdi-upload-zone:hover,
 .pdi-upload-zone.pdi-upload-zone-dragover {
-    background-color: rgba(59, 130, 246, 0.1);
-    border-color: var(--pdi-accent) !important;
+    background-color: rgba(59, 130, 246, 0.15); /* Fundo levemente azul no hover */
+    border-color: var(--pdi-accent-hover) !important;
+}
+
+/* Fundo da imagem de Preview para imagens PNG não sumirem no fundo preto */
+#uploadPreview {
+    background-color: var(--pdi-bg-sidebar); /* Um fundo mais claro que o modal */
+    padding: 0.5rem;
+    border: 1px solid var(--pdi-border);
+}
+
+/* ---------- Novo Estilo para Nome do Arquivo no Modal ---------- */
+.pdi-filename-box {
+    word-break: break-all; /* Quebra o nome se for muito longo */
+    display: inline-block; /* Mantém o fundo azul apenas ao redor do texto */
+}
+
+.pdi-filename-text {
+    background-color: var(--pdi-accent); /* Fundo azul de destaque */
+    font-weight: 500;
+}
+
+/* Garante que a imagem de preview esteja centralizada e visível */
+#uploadPreviewWrap img {
+    display: block; /* Essencial para 'margin: auto' funcionar */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #cbd5e1; /* Um fundo cinza claro para PNGs */
+    padding: 0.5rem;
 }

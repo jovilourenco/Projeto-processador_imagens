@@ -16,12 +16,13 @@ def processar_imagem(request):
             file = request.FILES['image']
             
             # Validação
-            if not file.name.lower().endswith('.png'):
-                return JsonResponse({'error': 'Apenas arquivos PNG são permitidos'}, status=400)
+            tipo_arquivo = file.name.lower()
+            if not (tipo_arquivo.endswith('.png') or tipo_arquivo.endswith('.jpeg') or tipo_arquivo.endswith('.jpg')):
+                return JsonResponse({'error': 'Apenas arquivos PNG e JPEG são permitidos'}, status=400)
 
             img_array = np.frombuffer(file.read(), np.uint8)
             
-            # Lê os 4 canais (Alpha) se existirem
+            # Lê os 4 canais (Alph  a) se existirem
             img = cv2.imdecode(img_array, cv2.IMREAD_UNCHANGED)
 
             # Como a imagem é png, temos que remover o canal alpha para não quebrar alguns filtros

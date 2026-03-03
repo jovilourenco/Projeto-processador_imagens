@@ -7,20 +7,25 @@
     'use strict';
 
     const MIME_PNG = 'image/png';
+    const MIME_JPEG = 'image/jpeg';
+    const MIME_JPG = 'image/jpg';
     const EXT_PNG = '.png';
+    const EXT_JPEG = '.jpeg';
+    const EXT_JPG = '.jpg';
 
     function byId(id) {
         return document.getElementById(id);
     }
 
     /**
-     * Verifica se o arquivo é PNG (por MIME e/ou extensão).
+     * Verifica se o arquivo é PNG ou JPEG (por MIME e/ou extensão).
      */
-    function isPng(file) {
-        if (!file || !file.type) return false;
-        if (file.type === MIME_PNG) return true;
+    function isImage(file) {
+        if (!file) return false;
+        var mimeType = file.type || '';
+        if (mimeType === MIME_PNG || mimeType === MIME_JPEG || mimeType === MIME_JPG) return true;
         var name = (file.name || '').toLowerCase();
-        return name.endsWith(EXT_PNG);
+        return name.endsWith(EXT_PNG) || name.endsWith(EXT_JPEG) || name.endsWith(EXT_JPG);
     }
 
     /**
@@ -40,15 +45,24 @@
     /**
      * Mostra preview, esconde erro e atualiza texto da zona.
      */
-    function showPreview(src) {
+    function showPreview(src, filename) {
         var wrap = byId('uploadPreviewWrap');
         var img = byId('uploadPreview');
         var zoneText = byId('uploadZoneText');
         var errEl = byId('uploadError');
+        var fileWrap = byId('uploadFileNameWrap');
+        var fileText = byId('uploadFileNameText');
+
         if (wrap && img) {
             img.src = src || '';
             wrap.classList.remove('d-none');
         }
+
+        if(fileWrap && fileText && filename) {
+            fileText.textContent = filename;
+            fileWrap.classList.remove('d-none');
+        }
+
         if (zoneText) zoneText.textContent = 'Imagem selecionada. Clique em Carregar ou escolha outra.';
         if (errEl) {
             errEl.classList.add('d-none');
@@ -63,11 +77,14 @@
         var errEl = byId('uploadError');
         var wrap = byId('uploadPreviewWrap');
         var zoneText = byId('uploadZoneText');
+        var fileWrap = byId('uploadFileNameWrap')
+
         if (errEl) {
-            errEl.textContent = message || 'Apenas arquivos PNG são permitidos.';
+            errEl.textContent = message || 'Apenas arquivos PNG e JPEG são permitidos.';
             errEl.classList.remove('d-none');
         }
         if (wrap) wrap.classList.add('d-none');
+        if (fileWrap) fileWrap.classList.add('d-none'); // Esconde nome no erro
         if (zoneText) zoneText.textContent = 'Clique ou arraste a imagem aqui';
     }
 
@@ -83,8 +100,8 @@
             showError('Nenhum arquivo.');
             return;
         }
-        if (!isPng(file)) {
-            showError('Apenas arquivos PNG são permitidos.');
+        if (!isImage(file)) {
+            showError('Apenas arquivos PNG e JPEG são permitidos.');
             return;
         }
 
@@ -94,8 +111,9 @@
 
         setInputFile(imageInput, file);
         var reader = new FileReader();
+        var nomeOriginal = file.name;
         reader.onload = function(e) {
-            showPreview(e.target.result);
+            showPreview(e.target.result, nomeOriginal);
         };
         reader.onerror = function() {
             showError('Erro ao ler o arquivo.');
@@ -111,8 +129,13 @@
         var img = byId('uploadPreview');
         var zoneText = byId('uploadZoneText');
         var errEl = byId('uploadError');
+        var fileWrap = byId('uploadFileNameWrap');
+        var fileText = byId('uploadFileNameText');
+
         if (img) img.src = '';
         if (wrap) wrap.classList.add('d-none');
+        if (fileWrap) fileWrap.classList.add('d-none'); // Reseta nome
+        if (fileText) fileText.textContent = ''; // Limpa nome
         if (zoneText) zoneText.textContent = 'Clique ou arraste a imagem aqui';
         if (errEl) {
             errEl.classList.add('d-none');
@@ -186,8 +209,8 @@
         if (btnConfirm) {
             btnConfirm.addEventListener('click', function() {
                 var file = imageInput.files[0];
-                if (!file || !isPng(file)) {
-                    showError('Selecione um arquivo PNG.');
+                if (!file || !isImage(file)) {
+                    showError('Selecione um arquivo PNG ou JPEG.');
                     return;
                 }
                 var modal = bootstrap.Modal.getInstance(uploadModal);
