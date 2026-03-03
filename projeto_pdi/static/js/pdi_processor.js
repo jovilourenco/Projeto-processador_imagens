@@ -1,3 +1,21 @@
+function hideSiteLoader() {
+    const siteLoader = document.getElementById('siteLoader');
+    if (siteLoader) {
+        siteLoader.style.opacity = '0'; // Faz sumir suavemente
+        setTimeout(() => { siteLoader.style.display = 'none'; }, 500); // Remove do HTML
+    }
+}
+
+// Verifica imediatamente se a página já carregou (para lidar com refreshes no cache)
+if (document.readyState === 'complete') {
+    hideSiteLoader();
+} else {
+    // Se não carregou, espera o evento 'load'
+    window.addEventListener('load', hideSiteLoader);
+}
+
+
+// 2. LÓGICA PRINCIPAL DA APLICAÇÃO (Processamento Digital de Imagens)
 document.addEventListener('DOMContentLoaded', function() {
     let currentProcess = 'original';
     const imageInput = document.getElementById('imageInput');
@@ -10,16 +28,20 @@ document.addEventListener('DOMContentLoaded', function() {
         'original': () => `<p class="text-muted mb-0">Exibindo imagem original.</p>`,
         'threshold': () => `
             <div class="row align-items-center">
-                <div class="col-md-4">
-                    <label class="form-label small">Limiar (k): <b id="val_k">127</b></label>
-                    <input type="range" class="form-range pdi-ctrl" id="param_k" min="0" max="255" value="127">
+                <div class="col-md-12">
+                    <label class="form-label small">Limiar (k): 
+                        <input type="number" min="0" max="255" id="val_k" value="127" 
+                            oninput="document.getElementById('param_k').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_k" min="0" max="255" value="127" 
+                        oninput="document.getElementById('val_k').value = this.value">
                 </div>
             </div>`,
         'gaussian': () => `
             <div class="row align-items-center">
-                <div class="col-md-4">
+                <div class="col-md-12">
                     <label class="form-label small">Intensidade (Sigma): <b id="val_s">1</b></label>
-                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1">
+                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="70" value="1">
                 </div>
             </div>`
     };
@@ -46,21 +68,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Carregamento de imagem
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('pdi-ctrl')) {
+            // Se o range mudar, atualiza o campo numérico correspondente
+            // Assumindo que o ID do input seja 'val_' + o resto do ID do range
+            const numberInput = document.getElementById('val_' + e.target.id.split('_')[1]);
+            if (numberInput) numberInput.value = e.target.value;
+        }
+    });
+
+    // Carregamento de imagem original com Loader
     document.getElementById('btnLoad').addEventListener('click', () => {
         const file = imageInput.files[0];
         if (file) {
-            if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/jpg") { // Valida se é png
-            alert("Por favor, selecione apenas arquivos PNG e JPEG.");
-            imageInput.value = "";
-            return;
+            // Valida se é formato de imagem aceito
+            if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/jpg") { 
+                alert("Por favor, selecione apenas arquivos PNG e JPEG.");
+                imageInput.value = "";
+                return;
             }
+
+            const loaderIn = document.getElementById('loaderInput');
+            if (loaderIn) loaderIn.classList.remove('d-none'); // MOSTRA O LOADER DO INPUT
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 imgIn.src = e.target.result;
                 imgIn.classList.remove('d-none');
                 document.getElementById('placeholderInput').classList.add('d-none');
+                
+                if (loaderIn) loaderIn.classList.add('d-none'); // ESCONDE O LOADER
+                
                 processImage();
             };
             reader.readAsDataURL(file);
@@ -93,7 +131,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 imgOut.classList.remove('d-none');
                 document.getElementById('placeholderOutput').classList.add('d-none');
             }
-        } catch (err) { console.error("Erro no processamento:", err); }
+        } catch (err) { 
+            console.error("Erro no processamento:", err); 
+        }
     }
 
     function getCookie(name) {

@@ -12,6 +12,13 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body class="pdi-theme">
+    <!-- Loader da página inteira (carregamento inicial) -->
+    <div class="pdi-full-loader" id="siteLoader">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+
     <!-- Form oculto para CSRF (Django): sem method/action – envio é via fetch no JS -->
     <form style="display:none;">
         {% csrf_token %}
@@ -79,11 +86,15 @@
 
         <!-- Área central: imagens e histogramas -->
         <main class="pdi-main">
-            <!-- Painéis: imagem original | imagem processada -->
             <div class="pdi-images-row">
                 <div class="pdi-image-panel">
                     <h3 class="pdi-panel-title">IMAGEM ORIGINAL</h3>
                     <div class="pdi-canvas-wrap">
+                        
+                        <div class="pdi-canvas-loader d-none" id="loaderInput">
+                            <div class="spinner-border text-light" role="status"></div>
+                        </div>
+
                         <img id="imgInput" src="" class="img-fluid d-none" alt="Imagem original">
                         <div id="placeholderInput" class="pdi-placeholder">
                             <i class="bi bi-image"></i>
@@ -92,9 +103,15 @@
                     </div>
                     <p class="pdi-image-meta">Dimensões: - | Tipo: -</p>
                 </div>
+                
                 <div class="pdi-image-panel">
                     <h3 class="pdi-panel-title">IMAGEM PROCESSADA</h3>
                     <div class="pdi-canvas-wrap">
+                        
+                        <div class="pdi-canvas-loader d-none" id="loaderOutput">
+                            <div class="spinner-border text-primary" role="status"></div>
+                        </div>
+
                         <img id="imgOutput" src="" class="img-fluid d-none" alt="Imagem processada">
                         <div id="placeholderOutput" class="pdi-placeholder">
                             <i class="bi bi-image"></i>
@@ -105,7 +122,6 @@
                 </div>
             </div>
 
-            <!-- Área de histogramas -->
             <section class="pdi-histograms-section">
                 <h2 class="pdi-sidebar-title">HISTOGRAMAS</h2>
                 <div class="pdi-histograms-row" id="accessoryData">
