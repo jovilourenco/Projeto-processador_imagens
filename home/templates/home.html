@@ -51,31 +51,163 @@
 
     <!-- ========== CORPO: SIDEBAR + ÁREA CENTRAL ========== -->
     <div class="pdi-body">
+
         <!-- Sidebar: processos disponíveis + parâmetros -->
         <aside class="pdi-sidebar">
-            <section class="pdi-sidebar-section">
+            <section class="pdi-sidebar-section pdi-sidebar-processes">
                 <h2 class="pdi-sidebar-title">PROCESSOS DISPONÍVEIS</h2>
-                <div class="list-group list-group-flush pdi-process-list" id="processSelector">
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item active" data-process="original">
-                        Original <i class="bi bi-chevron-right"></i>
-                    </button>
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item" data-process="negative">
-                        Negativo <i class="bi bi-chevron-right"></i>
-                    </button>
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item" data-process="log">
-                        Transformação Logarítmica <i class="bi bi-chevron-right"></i>
-                    </button>
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item" data-process="threshold">
-                        Limiarização <i class="bi bi-chevron-right"></i>
-                    </button>
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item" data-process="gaussian">
-                        Filtro Gaussiano <i class="bi bi-chevron-right"></i>
-                    </button>
-                    <button type="button" class="list-group-item list-group-item-action pdi-process-item" data-process="sobel">
-                        Bordas de Sobel <i class="bi bi-chevron-right"></i>
-                    </button>
-                </div>
+
+                <!-- Lista de processos agrupados em categorias expansíveis -->
+                <div class="pdi-process-list" id="processSelector">
+
+                    <!-- ── Categoria: Geral ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-geral">
+                            <span><i class="bi bi-grid-1x2"></i> Geral</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-geral">
+                            <button type="button" class="pdi-process-item active" data-process="original">
+                                Original <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item" data-process="negative">
+                                Negativo <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Decomposição ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-decomp">
+                            <span><i class="bi bi-layers"></i> Decomposição</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-decomp">
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="rgb" disabled title="Não implementado">
+                                Canais RGB <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="hsv" disabled title="Não implementado">
+                                Canais HSV <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Transformações de Intensidade ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-intensity">
+                            <span><i class="bi bi-sliders"></i> Transformações de Intensidade</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-intensity">
+                            <button type="button" class="pdi-process-item" data-process="threshold">
+                                Limiarização <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item" data-process="log">
+                                Transf. Logarítmica <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="power" disabled title="Não implementado">
+                                Transf. de Potência <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="histogram_eq" disabled title="Não implementado">
+                                Equalização de Histograma <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="intensity_slice" disabled title="Não implementado">
+                                Fatiamento por Intensidade <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Filtros Espaciais ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-spatial">
+                            <span><i class="bi bi-funnel"></i> Filtros Espaciais</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-spatial">
+                            <button type="button" class="pdi-process-item" data-process="gaussian">
+                                Filtro Gaussiano <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="median" disabled title="Não implementado">
+                                Filtro de Mediana <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="min_filter" disabled title="Não implementado">
+                                Filtro de Mínimo <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="max_filter" disabled title="Não implementado">
+                                Filtro de Máximo <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="adaptive_median" disabled title="Não implementado">
+                                Mediana Adaptativa <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Realce e Bordas ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-edges">
+                            <span><i class="bi bi-pentagon"></i> Realce e Bordas</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-edges">
+                            <button type="button" class="pdi-process-item" data-process="sobel">
+                                Gradiente de Sobel <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="unsharp" disabled title="Não implementado">
+                                Máscara de Aguçamento <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="laplacian" disabled title="Não implementado">
+                                Realce por Laplaciano <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Domínio da Frequência ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-freq">
+                            <span><i class="bi bi-activity"></i> Domínio da Frequência</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-freq">
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="gauss_lpf" disabled title="Não implementado">
+                                Passa-Baixa Gaussiano <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="gauss_hpf" disabled title="Não implementado">
+                                Passa-Alta Gaussiano <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="butter_lpf" disabled title="Não implementado">
+                                Passa-Baixa Butterworth <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="butter_hpf" disabled title="Não implementado">
+                                Passa-Alta Butterworth <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── Categoria: Ruído ── -->
+                    <div class="pdi-category">
+                        <button class="pdi-category-header" data-target="cat-noise">
+                            <span><i class="bi bi-broadcast"></i> Ruído</span>
+                            <i class="bi bi-chevron-down pdi-cat-chevron rotated"></i>
+                        </button>
+                        <div class="pdi-category-body" id="cat-noise">
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="gaussian_noise" disabled title="Não implementado">
+                                Ruído Gaussiano <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="salt_noise" disabled title="Não implementado">
+                                Ruído Sal <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="pepper_noise" disabled title="Não implementado">
+                                Ruído Pimenta <i class="bi bi-slash-circle"></i>
+                            </button>
+                            <button type="button" class="pdi-process-item pdi-not-implemented" data-process="salt_pepper_noise" disabled title="Não implementado">
+                                Ruído Sal e Pimenta <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div><!-- /#processSelector -->
             </section>
+
             <section class="pdi-params-section">
                 <h2 class="pdi-sidebar-title">PARÂMETROS</h2>
                 <div class="pdi-params-inner" id="paramsContainer">
@@ -90,11 +222,9 @@
                 <div class="pdi-image-panel" id="panelInput" style="cursor: pointer;">
                     <h3 class="pdi-panel-title">IMAGEM ORIGINAL</h3>
                     <div class="pdi-canvas-wrap">
-                        
                         <div class="pdi-canvas-loader d-none" id="loaderInput">
                             <div class="spinner-border text-light" role="status"></div>
                         </div>
-
                         <img id="imgInput" src="" class="img-fluid d-none" alt="Imagem original">
                         <div id="placeholderInput" class="pdi-placeholder">
                             <i class="bi bi-image"></i>
@@ -107,11 +237,9 @@
                 <div class="pdi-image-panel">
                     <h3 class="pdi-panel-title">IMAGEM PROCESSADA</h3>
                     <div class="pdi-canvas-wrap">
-                        
                         <div class="pdi-canvas-loader d-none" id="loaderOutput">
                             <div class="spinner-border text-primary" role="status"></div>
                         </div>
-
                         <img id="imgOutput" src="" class="img-fluid d-none" alt="Imagem processada">
                         <div id="placeholderOutput" class="pdi-placeholder">
                             <i class="bi bi-image"></i>
@@ -150,7 +278,8 @@
                         <i class="bi bi-image fs-1 text-muted d-block mb-2"></i>
                         <span class="text-muted" id="uploadZoneText">Clique ou arraste a imagem aqui</span>
                     </div>
-                    <div class="mt-3 d-none text-center" id="uploadPreviewWrap"> <p class="small text-muted mb-1">Preview:</p>
+                    <div class="mt-3 d-none text-center" id="uploadPreviewWrap">
+                        <p class="small text-muted mb-1">Preview:</p>
                         <div id="uploadFileNameWrap" class="mb-2 pdi-filename-box d-none">
                             <span id="uploadFileNameText" class="pdi-filename-text text-white small px-2 py-1 rounded"></span>
                         </div>      
@@ -171,5 +300,35 @@
     <script src="{% static 'js/upload.js' %}"></script>
     <script src="{% static 'js/reset.js' %}"></script>
     <script src="{% static 'js/saveImg.js' %}"></script>
+
+    <!-- Script da sidebar expansível (inline, sem dependências extras) -->
+    <script>
+    (function () {
+        document.querySelectorAll('.pdi-category-header').forEach(function (header) {
+            header.addEventListener('click', function () {
+                var targetId = this.getAttribute('data-target');
+                var clickedBody = document.getElementById(targetId);
+                var clickedChevron = this.querySelector('.pdi-cat-chevron');
+                if (!clickedBody) return;
+
+                var isAlreadyOpen = clickedBody.classList.contains('open');
+
+                // Fecha TODAS as categorias
+                document.querySelectorAll('.pdi-category-body').forEach(function (body) {
+                    body.classList.remove('open');
+                });
+                document.querySelectorAll('.pdi-cat-chevron').forEach(function (chev) {
+                    chev.classList.add('rotated');
+                });
+
+                // Se a clicada estava fechada, abre ela
+                if (!isAlreadyOpen) {
+                    clickedBody.classList.add('open');
+                    if (clickedChevron) clickedChevron.classList.remove('rotated');
+                }
+            });
+        });
+    })();
+    </script>
 </body>
 </html>

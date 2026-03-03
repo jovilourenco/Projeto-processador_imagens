@@ -1,4 +1,3 @@
-
 /* ---------- Loaders (Carregamento) ---------- */
 /* Loader do Site (Tela cheia) */
 .pdi-full-loader {
@@ -149,7 +148,7 @@
 .pdi-body {
     display: flex;
     flex: 1;
-    min-height: calc(100vh - 56px);
+    height: calc(100vh - 56px);
     overflow: hidden;
 }
 
@@ -161,7 +160,16 @@
     border-right: 1px solid var(--pdi-border);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+}
+
+.pdi-sidebar-processes {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--pdi-border);
 }
 
 .pdi-sidebar-section {
@@ -177,32 +185,101 @@
     margin: 0 1rem 0.75rem;
 }
 
+/* ---------- Sidebar: lista de processos (novo accordion) ---------- */
 .pdi-process-list {
-    --bs-list-group-bg: transparent;
-    --bs-list-group-border-color: transparent;
+    display: flex;
+    flex-direction: column;
 }
 
-.pdi-process-item {
-    background: transparent !important;
-    color: var(--pdi-text);
+/* Categoria: cabeçalho clicável */
+.pdi-category-header {
+    width: 100%;
+    background: transparent;
     border: none;
-    border-radius: 0;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    border-top: 1px solid var(--pdi-border);
+    color: var(--pdi-text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-align: left;
+    gap: 0.5rem;
 }
 
-.pdi-process-item:hover {
-    background-color: rgba(255, 255, 255, 0.06) !important;
+.pdi-category-header:first-child {
+    border-top: none;
+}
+
+.pdi-category-header span {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.pdi-category-header span i {
+    color: var(--pdi-accent);
+    font-size: 0.85rem;
+}
+
+.pdi-category-header:hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: var(--pdi-text);
+}
+
+/* Chevron gira quando aberto */
+.pdi-cat-chevron {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+}
+
+.pdi-cat-chevron.rotated {
+    transform: rotate(-90deg);
+}
+
+/* Categoria: corpo colapsável */
+.pdi-category-body {
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pdi-category-body.open {
+    display: flex;
+}
+
+/* ---------- Itens de processo (dentro das categorias) ---------- */
+.pdi-process-item {
+    background: transparent;
+    border: none;
+    color: var(--pdi-text);
+    padding: 0.55rem 1rem 0.55rem 1.75rem;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-align: left;
+    width: 100%;
+    border-radius: 0;
+}
+
+.pdi-process-item:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.06);
     color: var(--pdi-text);
 }
 
 .pdi-process-item.active {
-    background-color: rgba(59, 130, 246, 0.2) !important;
+    background-color: rgba(59, 130, 246, 0.2);
     color: var(--pdi-text);
     border-left: 3px solid var(--pdi-accent);
+    padding-left: calc(1.75rem - 3px);
 }
 
 .pdi-process-item .bi-chevron-right {
@@ -210,16 +287,31 @@
     opacity: 0.7;
 }
 
-.pdi-process-list {
-    max-height: 50vh;
-    overflow-y: auto;
+/* ---------- Itens NÃO implementados ---------- */
+.pdi-not-implemented {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    color: var(--pdi-text-muted) !important;
+}
+
+.pdi-not-implemented:hover {
+    background-color: transparent !important;
+}
+
+.pdi-not-implemented .bi-slash-circle {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    color: var(--pdi-text-muted);
 }
 
 /* ---------- Seção Parâmetros (abaixo da lista na sidebar) ---------- */
 .pdi-params-section {
+    flex-shrink: 0;
     padding: 1rem 0;
-    flex: 1;
-    min-height: 0;
+    border-top: 1px solid var(--pdi-border);
+    min-height: 250px;
+    max-height: 220px;
+    overflow-y: auto;
 }
 
 .pdi-params-inner {
