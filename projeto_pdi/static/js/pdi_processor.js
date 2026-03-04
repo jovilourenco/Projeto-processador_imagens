@@ -31,7 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Listener ao input do usuário 
     panelInput.addEventListener('click', () => {
-        bootstrapModal.show();
+        // desabilita caso o usuário já tenha colocado uma imagem
+        if(!imgIn.src || imgIn.classList.contains('d-none')){
+            bootstrapModal.show();
+        }
     });
 
     // Gatilho para a imagem original (envio de metadatas dimensões e tipo)
@@ -128,6 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = (e) => {
                 imgIn.src = e.target.result;
                 imgIn.classList.remove('d-none');
+                // Não mostra o cursor para adicionar foto no 'imagem original'
+                panelInput.style.cursor = 'default';
                 document.getElementById('placeholderInput').classList.add('d-none');
                 
                 if (loaderIn) loaderIn.classList.add('d-none'); // ESCONDE O LOADER

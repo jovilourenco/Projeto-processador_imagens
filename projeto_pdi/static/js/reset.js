@@ -3,6 +3,7 @@
     const imageInput = document.getElementById('imageInput');
     const imgInput = document.getElementById('imgInput');
     const imgOutput = document.getElementById('imgOutput');
+    const panelInput = document.getElementById('panelInput');
 
     if (!btnReset) return;
 
@@ -43,6 +44,8 @@
                 </div>
             `;
         }
+
+        panelInput.style.cursor = 'pointer';
 
         console.log("Imagem resetada.");
     });
