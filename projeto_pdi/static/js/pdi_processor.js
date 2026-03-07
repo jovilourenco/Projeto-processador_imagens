@@ -68,8 +68,12 @@ document.addEventListener('DOMContentLoaded', function() {
         'gaussian': () => `
             <div class="row align-items-center">
                 <div class="col-md-12">
-                    <label class="form-label small">Intensidade (Sigma): <b id="val_s">1</b></label>
-                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="70" value="1">
+                    <label class="form-label small">Intensidade (Sigma): 
+                        <input type="number" min="1" max="70" id="val_s" value="1" class="pdi-ctrl"
+                            oninput="document.getElementById('param_s').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="70" value="1"
+                        oninput="document.getElementById('val_s').value = this.value">
                 </div>
             </div>`
     };
