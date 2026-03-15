@@ -121,11 +121,17 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .btn-pdi-primary:hover {
     background-color: var(--pdi-accent-hover);
     color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-pdi-primary:active {
+    transform: translateY(0);
 }
 
 .btn-pdi-secondary {
@@ -137,11 +143,17 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .btn-pdi-secondary:hover {
     background-color: var(--pdi-border);
     color: var(--pdi-text);
+    transform: translateY(-1px);
+}
+
+.btn-pdi-secondary:active {
+    transform: translateY(0);
 }
 
 /* ---------- Corpo: sidebar + main ---------- */
@@ -170,6 +182,40 @@
     overflow-y: auto;
     padding: 1rem 0;
     border-bottom: 1px solid var(--pdi-border);
+    scroll-behavior: smooth;
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar,
+.pdi-params-section::-webkit-scrollbar {
+    width: 8px; 
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar-track,
+.pdi-params-section::-webkit-scrollbar-track {
+    background: var(--pdi-bg-sidebar);
+    border-left: 1px solid var(--pdi-border);
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar-thumb,
+.pdi-params-section::-webkit-scrollbar-thumb {
+    background: var(--pdi-secondary);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar-thumb:hover,
+.pdi-params-section::-webkit-scrollbar-thumb:hover {
+    background: var(--pdi-accent-hover);
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar-thumb:active,
+.pdi-params-section::-webkit-scrollbar-thumb:active {
+    background: var(--pdi-accent);
+}
+
+.pdi-sidebar-processes::-webkit-scrollbar-corner,
+.pdi-params-section::-webkit-scrollbar-corner {
+    background: var(--pdi-bg-sidebar);
 }
 
 .pdi-sidebar-section {
@@ -185,7 +231,7 @@
     margin: 0 1rem 0.75rem;
 }
 
-/* ---------- Sidebar: lista de processos (novo accordion) ---------- */
+/* ---------- Sidebar: lista de processos (accordion com animações) ---------- */
 .pdi-process-list {
     display: flex;
     flex-direction: column;
@@ -207,7 +253,7 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.2s ease, color 0.2s ease;
     text-align: left;
     gap: 0.5rem;
 }
@@ -225,33 +271,70 @@
 .pdi-category-header span i {
     color: var(--pdi-accent);
     font-size: 0.85rem;
+    transition: transform 0.2s ease;
 }
 
 .pdi-category-header:hover {
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: rgba(59, 130, 246, 0.1);
     color: var(--pdi-text);
 }
 
-/* Chevron gira quando aberto */
+.pdi-category-header:hover span i {
+    transform: scale(1.1);
+}
+
+/* Chevron gira quando aberto - animação suave */
 .pdi-cat-chevron {
     font-size: 0.7rem;
-    transition: transform 0.2s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pdi-cat-chevron.rotated {
     transform: rotate(-90deg);
 }
 
-/* Categoria: corpo colapsável */
+/* Categoria: corpo colapsável com animação suave */
 .pdi-category-body {
-    display: none;
-    flex-direction: column;
+    max-height: 0;
+    opacity: 0;
     overflow: hidden;
+    transform: translateY(-10px);
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.02) 100%);
 }
 
 .pdi-category-body.open {
-    display: flex;
+    max-height: 500px; /* Valor alto o suficiente para caber todos os itens */
+    opacity: 1;
+    transform: translateY(0);
 }
+
+/* Animação de entrada para os itens */
+.pdi-category-body .pdi-process-item {
+    animation: slideInItem 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+@keyframes slideInItem {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Delays progressivos para cada item */
+.pdi-category-body .pdi-process-item:nth-child(1) { animation-delay: 0.05s; }
+.pdi-category-body .pdi-process-item:nth-child(2) { animation-delay: 0.1s; }
+.pdi-category-body .pdi-process-item:nth-child(3) { animation-delay: 0.15s; }
+.pdi-category-body .pdi-process-item:nth-child(4) { animation-delay: 0.2s; }
+.pdi-category-body .pdi-process-item:nth-child(5) { animation-delay: 0.25s; }
+.pdi-category-body .pdi-process-item:nth-child(6) { animation-delay: 0.3s; }
+.pdi-category-body .pdi-process-item:nth-child(7) { animation-delay: 0.35s; }
+.pdi-category-body .pdi-process-item:nth-child(8) { animation-delay: 0.4s; }
 
 /* ---------- Itens de processo (dentro das categorias) ---------- */
 .pdi-process-item {
@@ -264,15 +347,20 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.2s ease, 
+                color 0.2s ease, 
+                padding-left 0.2s ease,
+                border-left 0.1s ease;
     text-align: left;
     width: 100%;
     border-radius: 0;
+    position: relative;
 }
 
 .pdi-process-item:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.06);
+    background-color: rgba(59, 130, 246, 0.1);
     color: var(--pdi-text);
+    padding-left: 2rem; /* Efeito sutil de deslizamento no hover */
 }
 
 .pdi-process-item.active {
@@ -280,11 +368,17 @@
     color: var(--pdi-text);
     border-left: 3px solid var(--pdi-accent);
     padding-left: calc(1.75rem - 3px);
+    box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.1);
 }
 
 .pdi-process-item .bi-chevron-right {
     font-size: 0.75rem;
     opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.pdi-process-item:hover .bi-chevron-right {
+    transform: translateX(3px);
 }
 
 /* ---------- Itens NÃO implementados ---------- */
@@ -296,6 +390,7 @@
 
 .pdi-not-implemented:hover {
     background-color: transparent !important;
+    padding-left: 1.75rem !important; /* Mantém o padding original */
 }
 
 .pdi-not-implemented .bi-slash-circle {
@@ -312,6 +407,7 @@
     min-height: 250px;
     max-height: 220px;
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 .pdi-params-inner {
@@ -321,6 +417,7 @@
 
 .pdi-params-inner .form-label {
     color: var(--pdi-text-muted);
+    transition: color 0.2s ease;
 }
 
 .pdi-params-inner .form-range {
@@ -333,6 +430,14 @@
     border: 1px solid var(--pdi-border);
     color: var(--pdi-text);
     border-radius: 0.375rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pdi-params-inner input[type="number"]:focus,
+.pdi-params-inner input[type="text"]:focus {
+    border-color: var(--pdi-accent);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
 }
 
 /* Classe usada pelo JS para controles dinâmicos */
@@ -368,6 +473,12 @@
     border: 1px solid var(--pdi-border);
     border-radius: 0.5rem;
     overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pdi-image-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .pdi-panel-title {
@@ -391,12 +502,19 @@
     margin: 0.5rem;
     border-radius: 0.375rem;
     position: relative;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.pdi-canvas-wrap:hover {
+    border-color: var(--pdi-accent);
+    background-color: rgba(59, 130, 246, 0.02);
 }
 
 .pdi-canvas-wrap img {
     max-height: 320px;
     width: auto;
     object-fit: contain;
+    transition: opacity 0.3s ease;
 }
 
 .pdi-placeholder {
@@ -412,6 +530,12 @@
 .pdi-placeholder i {
     font-size: 2.5rem;
     opacity: 0.6;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.pdi-placeholder:hover i {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .pdi-image-meta {
@@ -446,6 +570,12 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.pdi-histogram-box:hover {
+    border-color: var(--pdi-accent);
+    transform: scale(1.02);
 }
 
 @media (max-width: 768px) {
@@ -470,6 +600,7 @@
     background-color: var(--pdi-bg-panel);
     border: 1px solid var(--pdi-border);
     color: var(--pdi-text);
+    transition: transform 0.2s ease;
 }
 
 .pdi-modal-content .modal-header {
@@ -482,6 +613,11 @@
 
 .pdi-modal-content .btn-close-white {
     filter: invert(1);
+    transition: opacity 0.2s ease;
+}
+
+.pdi-modal-content .btn-close-white:hover {
+    opacity: 0.8;
 }
 
 /* Corrigindo a cor dos textos e títulos dentro do modal */
@@ -501,12 +637,13 @@
     border: 2px dashed var(--pdi-accent) !important; /* Borda azul para chamar atenção */
     cursor: pointer;
     border-radius: 0.5rem;
-    transition: background-color 0.2s, border-color 0.2s;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 /* Destaque para o ícone e o texto dentro da área de upload */
 .pdi-upload-zone i {
     color: var(--pdi-accent) !important; /* Ícone azul */
+    transition: transform 0.2s ease;
 }
 
 .pdi-upload-zone span {
@@ -518,6 +655,11 @@
 .pdi-upload-zone.pdi-upload-zone-dragover {
     background-color: rgba(59, 130, 246, 0.15); /* Fundo levemente azul no hover */
     border-color: var(--pdi-accent-hover) !important;
+    transform: scale(1.02);
+}
+
+.pdi-upload-zone:hover i {
+    transform: scale(1.1);
 }
 
 /* Fundo da imagem de Preview para imagens PNG não sumirem no fundo preto */
@@ -525,6 +667,7 @@
     background-color: var(--pdi-bg-sidebar); /* Um fundo mais claro que o modal */
     padding: 0.5rem;
     border: 1px solid var(--pdi-border);
+    transition: opacity 0.3s ease;
 }
 
 /* ---------- Novo Estilo para Nome do Arquivo no Modal ---------- */
@@ -536,6 +679,11 @@
 .pdi-filename-text {
     background-color: var(--pdi-accent); /* Fundo azul de destaque */
     font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.pdi-filename-text:hover {
+    background-color: var(--pdi-accent-hover);
 }
 
 /* Garante que a imagem de preview esteja centralizada e visível */
