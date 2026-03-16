@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home),
     path('pdi/processar/', views.processar_imagem, name='processar_imagem'),
+    path('pdi/carregar/',  views.carregar_imagem,  name='carregar_imagem'),
 ]

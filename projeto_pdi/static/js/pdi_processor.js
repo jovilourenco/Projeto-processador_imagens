@@ -53,7 +53,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configuração de controles por processo
     const configs = {
-        'original': () => `<p class="text-muted mb-0">Exibindo imagem original.</p>`,
+        'original':    () => `<p class="text-white mb-0">Exibindo imagem original.</p>`,
+        'negative':    () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'rgb':         () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'hsv':         () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'histogram_eq':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'salt_noise':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'pepper_noise':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
         'threshold': () => `
             <div class="row align-items-center">
                 <div class="col-md-12">
@@ -75,7 +82,130 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="70" value="1"
                         oninput="document.getElementById('val_s').value = this.value">
                 </div>
-            </div>`
+            </div>`,
+            'power':() => `
+                <label class="form-label small">Gamma:
+                    <input type="number" min="0.1" max="5" step="0.1" id="val_gamma" class="pdi-ctrl" value="1.0"
+                        oninput="document.getElementById('param_gamma').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_gamma" min="0.1" max="5" step="0.1" value="1.0"
+                    oninput="document.getElementById('val_gamma').value = this.value">`,
+
+            'histogram_eq':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+
+            'intensity_slice':() => `
+                <label class="form-label small">Mínimo (low):
+                    <input type="number" min="0" max="255" id="val_low" class="pdi-ctrl" value="100"
+                        oninput="document.getElementById('param_low').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_low" min="0" max="255" value="100"
+                    oninput="document.getElementById('val_low').value = this.value">
+                <label class="form-label small">Máximo (high):
+                    <input type="number" min="0" max="255" id="val_high" class="pdi-ctrl" value="200"
+                        oninput="document.getElementById('param_high').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_high" min="0" max="255" value="200"
+                    oninput="document.getElementById('val_high').value = this.value">`,
+
+            'mean':() => `<!-- mesmo slider de gaussian -->
+                <label class="form-label small">Tamanho (s):
+                    <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
+                        oninput="document.getElementById('param_s').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
+                    oninput="document.getElementById('val_s').value = this.value">`,
+
+            'median':() => configs['mean'](),
+            'min_filter':() => configs['mean'](),
+            'max_filter':() => configs['mean'](),
+
+            'gauss_lpf':() => `
+                <label class="form-label small">Corte D0:
+                    <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
+                        oninput="document.getElementById('param_D0').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
+                    oninput="document.getElementById('val_D0').value = this.value">`,
+
+            'gauss_hpf':() => configs['gauss_lpf'](),
+            'butter_lpf':() => `
+                <label class="form-label small">Corte D0:
+                    <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
+                        oninput="document.getElementById('param_D0').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
+                    oninput="document.getElementById('val_D0').value = this.value">
+                <label class="form-label small">Ordem (n):
+                    <input type="number" min="1" max="10" id="val_n" class="pdi-ctrl" value="2"
+                        oninput="document.getElementById('param_n').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_n" min="1" max="10" value="2"
+                    oninput="document.getElementById('val_n').value = this.value">`,
+
+            'butter_hpf':() => configs['butter_lpf'](),
+
+            'log': () => `
+                <label class="form-label small">Ganho (c):
+                    <input type="number" min="0.1" max="5" step="0.1" id="val_c" class="pdi-ctrl" value="1.0"
+                        oninput="document.getElementById('param_c').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_c" min="0.1" max="5" step="0.1" value="1.0"
+                    oninput="document.getElementById('val_c').value = this.value">`,
+
+            'intensity_slice': () => `
+                <label class="form-label small">Mínimo (A):
+                    <input type="number" min="0" max="255" id="val_A" class="pdi-ctrl" value="100"
+                        oninput="document.getElementById('param_A').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_A" min="0" max="255" value="100"
+                    oninput="document.getElementById('val_A').value = this.value">
+                <label class="form-label small">Máximo (B):
+                    <input type="number" min="0" max="255" id="val_B" class="pdi-ctrl" value="200"
+                        oninput="document.getElementById('param_B').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_B" min="0" max="255" value="200"
+                    oninput="document.getElementById('val_B').value = this.value">
+                <label class="form-label small d-flex align-items-center gap-2 mt-1">
+                    <input type="checkbox" id="param_preserve_bg" class="pdi-ctrl" value="false"
+                        onchange="this.value = this.checked ? 'true' : 'false'; processImage()">
+                    Preservar fundo
+                </label>`,
+
+            'unsharp': () => `
+                <label class="form-label small">Ganho (k):
+                    <input type="number" min="0.1" max="5" step="0.1" id="val_k" class="pdi-ctrl" value="1.0"
+                        oninput="document.getElementById('param_k').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_k" min="0.1" max="5" step="0.1" value="1.0"
+                    oninput="document.getElementById('val_k').value = this.value">
+                <label class="form-label small mt-1">Tamanho janela (s):
+                    <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
+                        oninput="document.getElementById('param_s').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
+                    oninput="document.getElementById('val_s').value = this.value">`,
+
+            'gaussian_noise': () => `
+                <label class="form-label small">Desvio padrão (sigma):
+                    <input type="number" min="1" max="100" id="val_sigma" class="pdi-ctrl" value="25"
+                        oninput="document.getElementById('param_sigma').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_sigma" min="1" max="100" value="25"
+                    oninput="document.getElementById('val_sigma').value = this.value">
+                <label class="form-label small mt-1">Média (mu):
+                    <input type="number" min="-50" max="50" id="val_mu" class="pdi-ctrl" value="0"
+                        oninput="document.getElementById('param_mu').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_mu" min="-50" max="50" value="0"
+                    oninput="document.getElementById('val_mu').value = this.value">`,
+
+            'salt_pepper_noise': () => `
+                <label class="form-label small">Proporção sal/pimenta (ratio):
+                    <input type="number" min="0" max="1" step="0.1" id="val_ratio" class="pdi-ctrl" value="0.5"
+                        oninput="document.getElementById('param_ratio').value = this.value">
+                </label>
+                <input type="range" class="form-range pdi-ctrl" id="param_ratio" min="0" max="1" step="0.1" value="0.5"
+                    oninput="document.getElementById('val_ratio').value = this.value">`,
     };
 
     // Troca de Processo
@@ -132,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (loaderIn) loaderIn.classList.remove('d-none'); // MOSTRA O LOADER DO INPUT
 
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 imgIn.src = e.target.result;
                 imgIn.classList.remove('d-none');
                 // Não mostra o cursor para adicionar foto no 'imagem original'
@@ -140,6 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('placeholderInput').classList.add('d-none');
                 
                 if (loaderIn) loaderIn.classList.add('d-none'); // ESCONDE O LOADER
+
+                await loadOriginalHistogram(imageInput.files[0]);
                 
                 processImage();
             };
@@ -172,6 +304,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 imgOut.src = "data:image/png;base64," + data.image_out;
                 imgOut.classList.remove('d-none');
                 document.getElementById('placeholderOutput').classList.add('d-none');
+
+                // Renderiza o histograma se vier na resposta
+                if (data.histogram) {
+                    renderHistogram('histOutput', data.histogram);
+                }
             }
         } catch (err) { 
             console.error("Erro no processamento:", err); 
@@ -215,4 +352,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
+
+    // Função para renderizar os histogramas caso necessário
+    function renderHistogram(canvasId, histData, panelIndex = 1) {
+        const container = document.getElementById('accessoryData');
+        const boxes = container.querySelectorAll('.pdi-histogram-box');
+
+        let canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            const box = boxes[panelIndex];
+            box.innerHTML = '';
+            canvas = document.createElement('canvas');
+            canvas.id = canvasId;
+            canvas.width = 256;
+            canvas.height = 100;
+            canvas.style.width = '100%';
+            box.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const channelColors = { r: '#e05555', g: '#55a055', b: '#5577e0', gray: '#aaaaaa' };
+        const channels = Object.keys(histData);
+        const maxVal = Math.max(...channels.flatMap(ch => histData[ch]));
+
+        channels.forEach(ch => {
+            const values = histData[ch];
+            ctx.beginPath();
+            ctx.strokeStyle = channelColors[ch] || '#aaaaaa';
+            ctx.globalAlpha = channels.length > 1 ? 0.75 : 1.0;
+            ctx.lineWidth = 1;
+            values.forEach((v, i) => {
+                const x = i;
+                const y = canvas.height - (v / maxVal) * canvas.height;
+                i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        });
+
+        ctx.globalAlpha = 1.0;
+    }
+
+    async function loadOriginalHistogram(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('/pdi/carregar/', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': getCookie('csrftoken') }
+            });
+            const data = await response.json();
+            if (data.histogram) {
+                renderHistogram('histInput', data.histogram, 0); // índice 0 = painel original
+            }
+        } catch (err) {
+            console.error('Erro ao carregar histograma original:', err);
+        }
+    }
+
 });
