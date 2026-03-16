@@ -53,14 +53,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configuração de controles por processo
     const configs = {
-        'original':    () => `<p class="text-white mb-0">Exibindo imagem original.</p>`,
-        'negative':    () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-        'rgb':         () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-        'hsv':         () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-        'histogram_eq':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-        'salt_noise':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-        'pepper_noise':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        // === GERAL ===
+        'original': () => `<p class="text-white mb-0">Exibindo imagem original.</p>`,
+        'negative': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
         
+        // === DECOMPOSIÇÃO ===
+        'rgb': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'hsv': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        // === TRANSFORMAÇÕES DE INTENSIDADE ===
         'threshold': () => `
             <div class="row align-items-center">
                 <div class="col-md-12">
@@ -72,140 +73,194 @@ document.addEventListener('DOMContentLoaded', function() {
                         oninput="document.getElementById('val_k').value = this.value">
                 </div>
             </div>`,
+        
+        'log': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Ganho (c):
+                        <input type="number" min="0.1" max="5" step="0.1" id="val_c" class="pdi-ctrl" value="1.0"
+                            oninput="document.getElementById('param_c').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_c" min="0.1" max="5" step="0.1" value="1.0"
+                        oninput="document.getElementById('val_c').value = this.value">
+                </div>
+            </div>`,
+        
+        'power': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Gamma:
+                        <input type="number" min="0.1" max="5" step="0.1" id="val_gamma" class="pdi-ctrl" value="1.0"
+                            oninput="document.getElementById('param_gamma').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_gamma" min="0.1" max="5" step="0.1" value="1.0"
+                        oninput="document.getElementById('val_gamma').value = this.value">
+                </div>
+            </div>`,
+        
+        'histogram_eq': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        'intensity_slice': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Mínimo (low):
+                        <input type="number" min="0" max="255" id="val_low" class="pdi-ctrl" value="100"
+                            oninput="document.getElementById('param_low').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_low" min="0" max="255" value="100"
+                        oninput="document.getElementById('val_low').value = this.value">
+                    
+                    <label class="form-label small mt-2">Máximo (high):
+                        <input type="number" min="0" max="255" id="val_high" class="pdi-ctrl" value="200"
+                            oninput="document.getElementById('param_high').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_high" min="0" max="255" value="200"
+                        oninput="document.getElementById('val_high').value = this.value">
+                    
+                    <div class="form-check mt-2">
+                        <input type="checkbox" class="form-check-input pdi-ctrl" id="param_preserve_bg" 
+                            onchange="processImage()">
+                        <label class="form-check-label small">Preservar fundo</label>
+                    </div>
+                </div>
+            </div>`,
+        
+        // === FILTROS ESPACIAIS ===
         'gaussian': () => `
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <label class="form-label small">Intensidade (Sigma): 
-                        <input type="number" min="1" max="70" id="val_s" value="1" class="pdi-ctrl"
+                        <input type="number" min="1" max="70" id="val_s" class="pdi-ctrl" value="1"
                             oninput="document.getElementById('param_s').value = this.value">
                     </label>
                     <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="70" value="1"
                         oninput="document.getElementById('val_s').value = this.value">
                 </div>
             </div>`,
-            'power':() => `
-                <label class="form-label small">Gamma:
-                    <input type="number" min="0.1" max="5" step="0.1" id="val_gamma" class="pdi-ctrl" value="1.0"
-                        oninput="document.getElementById('param_gamma').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_gamma" min="0.1" max="5" step="0.1" value="1.0"
-                    oninput="document.getElementById('val_gamma').value = this.value">`,
-
-            'histogram_eq':() => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
-
-            'intensity_slice':() => `
-                <label class="form-label small">Mínimo (low):
-                    <input type="number" min="0" max="255" id="val_low" class="pdi-ctrl" value="100"
-                        oninput="document.getElementById('param_low').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_low" min="0" max="255" value="100"
-                    oninput="document.getElementById('val_low').value = this.value">
-                <label class="form-label small">Máximo (high):
-                    <input type="number" min="0" max="255" id="val_high" class="pdi-ctrl" value="200"
-                        oninput="document.getElementById('param_high').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_high" min="0" max="255" value="200"
-                    oninput="document.getElementById('val_high').value = this.value">`,
-
-            'mean':() => `<!-- mesmo slider de gaussian -->
-                <label class="form-label small">Tamanho (s):
-                    <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
-                        oninput="document.getElementById('param_s').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
-                    oninput="document.getElementById('val_s').value = this.value">`,
-
-            'median':() => configs['mean'](),
-            'min_filter':() => configs['mean'](),
-            'max_filter':() => configs['mean'](),
-
-            'gauss_lpf':() => `
-                <label class="form-label small">Corte D0:
-                    <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
-                        oninput="document.getElementById('param_D0').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
-                    oninput="document.getElementById('val_D0').value = this.value">`,
-
-            'gauss_hpf':() => configs['gauss_lpf'](),
-            'butter_lpf':() => `
-                <label class="form-label small">Corte D0:
-                    <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
-                        oninput="document.getElementById('param_D0').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
-                    oninput="document.getElementById('val_D0').value = this.value">
-                <label class="form-label small">Ordem (n):
-                    <input type="number" min="1" max="10" id="val_n" class="pdi-ctrl" value="2"
-                        oninput="document.getElementById('param_n').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_n" min="1" max="10" value="2"
-                    oninput="document.getElementById('val_n').value = this.value">`,
-
-            'butter_hpf':() => configs['butter_lpf'](),
-
-            'log': () => `
-                <label class="form-label small">Ganho (c):
-                    <input type="number" min="0.1" max="5" step="0.1" id="val_c" class="pdi-ctrl" value="1.0"
-                        oninput="document.getElementById('param_c').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_c" min="0.1" max="5" step="0.1" value="1.0"
-                    oninput="document.getElementById('val_c').value = this.value">`,
-
-            'intensity_slice': () => `
-                <label class="form-label small">Mínimo (A):
-                    <input type="number" min="0" max="255" id="val_A" class="pdi-ctrl" value="100"
-                        oninput="document.getElementById('param_A').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_A" min="0" max="255" value="100"
-                    oninput="document.getElementById('val_A').value = this.value">
-                <label class="form-label small">Máximo (B):
-                    <input type="number" min="0" max="255" id="val_B" class="pdi-ctrl" value="200"
-                        oninput="document.getElementById('param_B').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_B" min="0" max="255" value="200"
-                    oninput="document.getElementById('val_B').value = this.value">
-                <label class="form-label small d-flex align-items-center gap-2 mt-1">
-                    <input type="checkbox" id="param_preserve_bg" class="pdi-ctrl" value="false"
-                        onchange="this.value = this.checked ? 'true' : 'false'; processImage()">
-                    Preservar fundo
-                </label>`,
-
-            'unsharp': () => `
-                <label class="form-label small">Ganho (k):
-                    <input type="number" min="0.1" max="5" step="0.1" id="val_k" class="pdi-ctrl" value="1.0"
-                        oninput="document.getElementById('param_k').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_k" min="0.1" max="5" step="0.1" value="1.0"
-                    oninput="document.getElementById('val_k').value = this.value">
-                <label class="form-label small mt-1">Tamanho janela (s):
-                    <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
-                        oninput="document.getElementById('param_s').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
-                    oninput="document.getElementById('val_s').value = this.value">`,
-
-            'gaussian_noise': () => `
-                <label class="form-label small">Desvio padrão (sigma):
-                    <input type="number" min="1" max="100" id="val_sigma" class="pdi-ctrl" value="25"
-                        oninput="document.getElementById('param_sigma').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_sigma" min="1" max="100" value="25"
-                    oninput="document.getElementById('val_sigma').value = this.value">
-                <label class="form-label small mt-1">Média (mu):
-                    <input type="number" min="-50" max="50" id="val_mu" class="pdi-ctrl" value="0"
-                        oninput="document.getElementById('param_mu').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_mu" min="-50" max="50" value="0"
-                    oninput="document.getElementById('val_mu').value = this.value">`,
-
-            'salt_pepper_noise': () => `
-                <label class="form-label small">Proporção sal/pimenta (ratio):
-                    <input type="number" min="0" max="1" step="0.1" id="val_ratio" class="pdi-ctrl" value="0.5"
-                        oninput="document.getElementById('param_ratio').value = this.value">
-                </label>
-                <input type="range" class="form-range pdi-ctrl" id="param_ratio" min="0" max="1" step="0.1" value="0.5"
-                    oninput="document.getElementById('val_ratio').value = this.value">`,
+        
+        'mean': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Tamanho (s):
+                        <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
+                            oninput="document.getElementById('param_s').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
+                        oninput="document.getElementById('val_s').value = this.value">
+                </div>
+            </div>`,
+        
+        'median': () => configs['mean'](),
+        'min_filter': () => configs['mean'](),
+        'max_filter': () => configs['mean'](),
+        
+        'adaptive_median': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Janela máxima (smax):
+                        <input type="number" min="3" max="21" step="2" id="val_smax" class="pdi-ctrl" value="7"
+                            oninput="document.getElementById('param_smax').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_smax" min="3" max="21" step="2" value="7"
+                        oninput="document.getElementById('val_smax').value = this.value">
+                </div>
+            </div>`,
+        
+        // === REALCE E BORDAS ===
+        'sobel': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        'unsharp': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Ganho (k):
+                        <input type="number" min="0.1" max="5" step="0.1" id="val_k" class="pdi-ctrl" value="1.0"
+                            oninput="document.getElementById('param_k').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_k" min="0.1" max="5" step="0.1" value="1.0"
+                        oninput="document.getElementById('val_k').value = this.value">
+                    
+                    <label class="form-label small mt-2">Tamanho janela (s):
+                        <input type="number" min="1" max="20" id="val_s" class="pdi-ctrl" value="1"
+                            oninput="document.getElementById('param_s').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_s" min="1" max="20" value="1"
+                        oninput="document.getElementById('val_s').value = this.value">
+                </div>
+            </div>`,
+        
+        'laplacian': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        // === DOMÍNIO DA FREQUÊNCIA ===
+        'gauss_lpf': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Corte D0:
+                        <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
+                            oninput="document.getElementById('param_D0').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
+                        oninput="document.getElementById('val_D0').value = this.value">
+                </div>
+            </div>`,
+        
+        'gauss_hpf': () => configs['gauss_lpf'](),
+        
+        'butter_lpf': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Corte D0:
+                        <input type="number" min="1" max="150" id="val_D0" class="pdi-ctrl" value="30"
+                            oninput="document.getElementById('param_D0').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_D0" min="1" max="150" value="30"
+                        oninput="document.getElementById('val_D0').value = this.value">
+                    
+                    <label class="form-label small mt-2">Ordem (n):
+                        <input type="number" min="1" max="10" id="val_n" class="pdi-ctrl" value="2"
+                            oninput="document.getElementById('param_n').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_n" min="1" max="10" value="2"
+                        oninput="document.getElementById('val_n').value = this.value">
+                </div>
+            </div>`,
+        
+        'butter_hpf': () => configs['butter_lpf'](),
+        
+        // === RUÍDO ===
+        'gaussian_noise': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Desvio padrão (sigma):
+                        <input type="number" min="1" max="100" id="val_sigma" class="pdi-ctrl" value="25"
+                            oninput="document.getElementById('param_sigma').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_sigma" min="1" max="100" value="25"
+                        oninput="document.getElementById('val_sigma').value = this.value">
+                    
+                    <label class="form-label small mt-2">Média (mu):
+                        <input type="number" min="-50" max="50" id="val_mu" class="pdi-ctrl" value="0"
+                            oninput="document.getElementById('param_mu').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_mu" min="-50" max="50" value="0"
+                        oninput="document.getElementById('val_mu').value = this.value">
+                </div>
+            </div>`,
+        
+        'salt_noise': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        'pepper_noise': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        
+        'salt_pepper_noise': () => `
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <label class="form-label small">Proporção sal/pimenta (ratio):
+                        <input type="number" min="0" max="1" step="0.1" id="val_ratio" class="pdi-ctrl" value="0.5"
+                            oninput="document.getElementById('param_ratio').value = this.value">
+                    </label>
+                    <input type="range" class="form-range pdi-ctrl" id="param_ratio" min="0" max="1" step="0.1" value="0.5"
+                        oninput="document.getElementById('val_ratio').value = this.value">
+                </div>
+            </div>`
     };
 
     // Troca de Processo
@@ -280,13 +335,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     async function processImage() {
-        if (!imageInput.files[0]) return;
+    if (!imageInput.files[0]) return;
 
-        const formData = new FormData();
+    // Mostra loader só para o filtro adaptativo
+    const isAdaptive = currentProcess === 'adaptive_median';
+    if (isAdaptive) setOutputLoader(true);
+
+    const formData = new FormData();
         formData.append('image', imageInput.files[0]);
         formData.append('process', currentProcess);
-        
-        // Pega todos os valores dos inputs de parâmetros
+
         const params = {};
         document.querySelectorAll('.pdi-ctrl').forEach(c => {
             params[c.id.replace('param_', '')] = c.value;
@@ -294,24 +352,27 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('params', JSON.stringify(params));
 
         try {
-            const response = await fetch('/pdi/processar/', { // URL do Django (envia como se fosse um servidor)
+            const response = await fetch('/pdi/processar/', {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-CSRFToken': getCookie('csrftoken') }
             });
             const data = await response.json();
+
             if (data.image_out) {
                 imgOut.src = "data:image/png;base64," + data.image_out;
                 imgOut.classList.remove('d-none');
                 document.getElementById('placeholderOutput').classList.add('d-none');
 
-                // Renderiza o histograma se vier na resposta
                 if (data.histogram) {
-                    renderHistogram('histOutput', data.histogram);
+                    renderHistogram('histOutput', data.histogram, 1);
                 }
             }
-        } catch (err) { 
-            console.error("Erro no processamento:", err); 
+        } catch (err) {
+            console.error("Erro no processamento:", err);
+        } finally {
+            // Esconde o loader sempre, independente de sucesso ou erro
+            if (isAdaptive) setOutputLoader(false);
         }
     }
 
@@ -410,6 +471,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (err) {
             console.error('Erro ao carregar histograma original:', err);
+        }
+    }
+
+    function setOutputLoader(visible) {
+        const loaderOut   = document.getElementById('loaderOutput');
+        const imgOut      = document.getElementById('imgOutput');
+        const placeholder = document.getElementById('placeholderOutput');
+
+        if (visible) {
+            loaderOut.classList.remove('d-none');
+            imgOut.classList.add('d-none');
+            // Só esconde o placeholder se já houver imagem processada
+            if (!imgOut.src || imgOut.src === window.location.href) {
+                placeholder.classList.remove('d-none');
+            }
+        } else {
+            loaderOut.classList.add('d-none');
         }
     }
 

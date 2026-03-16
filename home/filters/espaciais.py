@@ -35,42 +35,62 @@ def max_filter(img: np.ndarray, **params) -> np.ndarray:
 
 
 def adaptive_median(img: np.ndarray, **params) -> np.ndarray:
-    """
-    Mediana adaptativa: aplica mediana com kernel crescente pixel a pixel.
-    Smax define o tamanho máximo do kernel (deve ser ímpar).
-    """
     smax = int(params.get('smax', 7))
     if smax % 2 == 0:
         smax += 1
+    smax = max(3, smax)
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    result = gray.copy()
+    # Se for colorida, processa cada canal separadamente e reconstrói
+    if len(img.shape) == 3:
+        canais = cv2.split(img)
+        canais_filtrados = [_adaptive_median_channel(c, smax) for c in canais]
+        return cv2.merge(canais_filtrados)
+
+    return _adaptive_median_channel(img, smax)
+
+
+def _adaptive_median_channel(gray: np.ndarray, smax: int) -> np.ndarray:
+    """Aplica a mediana adaptativa em um único canal 2D."""
+    gray = gray.astype(np.int32)
     h, w = gray.shape
+    result = gray.copy()
+    pending = np.ones((h, w), dtype=bool)
 
-    for i in range(h):
-        for j in range(w):
-            s = 3
-            while s <= smax:
-                pad = s // 2
-                # Garante que a janela não ultrapasse as bordas
-                r0, r1 = max(i - pad, 0), min(i + pad + 1, h)
-                c0, c1 = max(j - pad, 0), min(j + pad + 1, w)
-                window = gray[r0:r1, c0:c1]
+    s = 3
+    while s <= smax and np.any(pending):
+        pad = s // 2
+        padded = np.pad(gray, pad, mode='reflect')
 
-                zmin = int(window.min())
-                zmax = int(window.max())
-                zmed = int(np.median(window))
-                zxy  = int(gray[i, j])
+        patches = []
+        for dy in range(s):
+            for dx in range(s):
+                patches.append(padded[dy:dy + h, dx:dx + w])
+        patches = np.array(patches, dtype=np.int32)
 
-                if zmin < zmed < zmax:
-                    # Estágio B: verifica se o pixel atual não é impulso
-                    result[i, j] = zxy if zmin < zxy < zmax else zmed
-                    break
-                else:
-                    s += 2  # Aumenta o kernel
+        zmin = patches.min(axis=0)
+        zmax = patches.max(axis=0)
+        zmed = np.median(patches, axis=0).astype(np.int32)
+        zxy  = gray
 
-            else:
-                # Tamanho máximo atingido: usa a mediana
-                result[i, j] = int(np.median(gray[i - smax//2:i + smax//2 + 1,
-                                                    j - smax//2:j + smax//2 + 1]))
-    return result
+        stageA_ok    = (zmin < zmed) & (zmed < zmax)
+        resolved_now = pending & stageA_ok
+        stageB_ok    = (zmin < zxy) & (zxy < zmax)
+
+        result = np.where(resolved_now & stageB_ok,  zxy,  result)
+        result = np.where(resolved_now & ~stageB_ok, zmed, result)
+
+        pending = pending & ~resolved_now
+        s += 2
+
+    if np.any(pending):
+        pad = smax // 2
+        padded = np.pad(gray, pad, mode='reflect')
+        patches = []
+        for dy in range(smax):
+            for dx in range(smax):
+                patches.append(padded[dy:dy + h, dx:dx + w])
+        patches = np.array(patches, dtype=np.int32)
+        zmed_final = np.median(patches, axis=0).astype(np.int32)
+        result = np.where(pending, zmed_final, result)
+
+    return np.clip(result, 0, 255).astype(np.uint8)
