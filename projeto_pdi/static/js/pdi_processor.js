@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
             canvas = document.createElement('canvas');
             canvas.id = canvasId;
             canvas.width = 256;
-            canvas.height = 100;
+            canvas.height = 50;
             canvas.style.width = '100%';
             box.appendChild(canvas);
         }
