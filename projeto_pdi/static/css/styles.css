@@ -695,8 +695,9 @@
     gap: 0.5rem;
     width: 100%;
     padding: 0.5rem;
-    justify-content: center;
     align-items: flex-start;
+    overflow-x: auto;
+    box-sizing: border-box;
 }
 
 .pdi-channel-col {
@@ -704,8 +705,9 @@
     flex-direction: column;
     align-items: center;
     gap: 0.35rem;
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 0;      /* cresce e encolhe igualmente */
+    min-width: 0;     /* permite encolher abaixo do conteúdo — esse é o ponto chave */
+    overflow: hidden;
 }
 
 .pdi-channel-label {
@@ -719,11 +721,26 @@
 
 .pdi-channel-img {
     width: 100%;
-    height: auto;
+    height: auto;     /* altura proporcional à largura — nunca corta */
     object-fit: contain;
     border-radius: 0.25rem;
     border: 1px solid var(--pdi-border);
-    max-height: 280px;
+}
+
+/* Modo decomposição: wrap expande livremente */
+.pdi-canvas-wrap.pdi-channels-mode {
+    min-height: 320px;
+    height: 320px;        /* altura fixa igual ao padrão */
+    align-items: center;
+    overflow-y: auto;     /* scroll se a imagem for mais alta que 320px */
+    display: flex;
+}
+
+/* Garante que a regra global de max-height não afete as imagens de canal */
+.pdi-canvas-wrap.pdi-channels-mode img {
+    max-height: unset;
+    width: 100%;
+    height: auto;
 }
 
 /* ---------- Novo Estilo para Nome do Arquivo no Modal ---------- */

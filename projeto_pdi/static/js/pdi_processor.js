@@ -488,18 +488,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderChannels(channels) {
-        const panel = document.getElementById('panelOutput') || imgOut.closest('.pdi-image-panel');
         const wrap = imgOut.closest('.pdi-canvas-wrap');
 
-        // Esconde a imagem única padrão
         imgOut.classList.add('d-none');
         document.getElementById('placeholderOutput').classList.add('d-none');
 
-        // Remove renderização anterior de canais se houver
         const existing = wrap.querySelector('.pdi-channels-row');
         if (existing) existing.remove();
 
-        // Cria a linha com os 3 canais
+        // Ativa modo canais no wrap
+        wrap.classList.add('pdi-channels-mode');
+
         const row = document.createElement('div');
         row.className = 'pdi-channels-row';
 
@@ -528,6 +527,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const wrap = imgOut.closest('.pdi-canvas-wrap');
         const existing = wrap.querySelector('.pdi-channels-row');
         if (existing) existing.remove();
+
+        // Remove modo canais e restaura estilos inline anteriores
+        wrap.classList.remove('pdi-channels-mode');
+        wrap.style.minHeight = '';
+        wrap.style.alignItems = '';
     }
 
     function setOutputLoader(visible) {
