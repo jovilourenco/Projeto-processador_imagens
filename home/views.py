@@ -53,7 +53,7 @@ def processar_imagem(request):
 
         process_type = request.POST.get('process', 'original')
         params = json.loads(request.POST.get('params', '{}'))
-
+        print(params)
         output = process(img, process_type, params)
 
         return JsonResponse({

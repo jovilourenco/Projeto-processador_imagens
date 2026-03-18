@@ -35,12 +35,12 @@ def equalize_histogram(img: np.ndarray, **params) -> np.ndarray:
 
 
 def intensity_slicing(img: np.ndarray, **params) -> np.ndarray:
-    A           = int(params.get('A', 100))
-    B           = int(params.get('B', 200))
+    a           = int(params.get('low', 100))
+    b          = int(params.get('high', 200))
     preserve_bg = str(params.get('preserve_bg', 'false')).lower() == 'true'
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    mask = (gray >= A) & (gray <= B)
+    mask = (gray >= a) & (gray <= b)
 
     if preserve_bg:
         result = gray.copy()

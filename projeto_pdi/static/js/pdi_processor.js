@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const params = {};
         document.querySelectorAll('.pdi-ctrl').forEach(c => {
-            params[c.id.replace('param_', '')] = c.value;
+            params[c.id.replace('param_', '')] = c.type === 'checkbox' ? c.checked : c.value;;
         });
         formData.append('params', JSON.stringify(params));
 
