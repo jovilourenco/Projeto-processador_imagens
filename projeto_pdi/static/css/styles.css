@@ -662,6 +662,25 @@
     transform: scale(1.1);
 }
 
+/* ---------- Itens de decomposição desabilitados (imagem em escala de cinza) ---------- */
+.pdi-process-item.pdi-process-disabled {
+    opacity: 0.35;
+    color: var(--pdi-text-muted) !important;
+    pointer-events: none;  /* bloqueia clique no filho */
+    cursor: not-allowed !important; /* não aparece aqui por causa do pointer-events, mas fica como fallback */
+}
+
+.pdi-process-item.pdi-process-disabled:hover {
+    background-color: transparent !important;
+    padding-left: 1.75rem !important;
+    transform: none !important;
+}
+
+/* Container pai recebe o cursor visualmente */
+#cat-decomp[style*="not-allowed"] {
+    cursor: not-allowed;
+}
+
 /* Fundo da imagem de Preview para imagens PNG não sumirem no fundo preto */
 #uploadPreview {
     background-color: var(--pdi-bg-sidebar); /* Um fundo mais claro que o modal */

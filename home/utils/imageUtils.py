@@ -31,6 +31,12 @@ def decode_image(file) -> np.ndarray:
         composed = (bgr * alpha + white * (1 - alpha))
         img = composed.astype(np.uint8)
 
+    # Detecta cinza visual: 3 canais onde B == G == R
+    if len(img.shape) == 3 and img.shape[2] == 3:
+        b, g, r = img[:, :, 0], img[:, :, 1], img[:, :, 2]
+        if np.array_equal(b, g) and np.array_equal(b, r):
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
     return img
 
 

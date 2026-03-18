@@ -467,9 +467,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'X-CSRFToken': getCookie('csrftoken') }
             });
             const data = await response.json();
+
             if (data.histogram) {
-                renderHistogram('histInput', data.histogram, 0); // índice 0 = painel original
+                renderHistogram('histInput', data.histogram, 0);
             }
+
+            setDecompositionEnabled(!data.is_grayscale);
+
         } catch (err) {
             console.error('Erro ao carregar histograma original:', err);
         }
@@ -490,6 +494,37 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             loaderOut.classList.add('d-none');
         }
+    }
+
+    function setDecompositionEnabled(enabled) {
+        const decompositionContainer = document.getElementById('cat-decomp');
+
+        // Seleciona botões de decomposição + botão de escala de cinza
+        const blockedButtons = document.querySelectorAll(
+            '#cat-decomp .pdi-process-item, [data-process="gray_scale"]'
+        );
+
+        if (decompositionContainer) {
+            decompositionContainer.style.cursor = enabled ? '' : 'not-allowed';
+        }
+
+        blockedButtons.forEach(btn => {
+            btn.title = enabled ? '' : 'Indisponível para imagens em escala de cinza';
+
+            if (!enabled) {
+                btn.classList.add('pdi-process-disabled');
+
+                if (btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                    document.querySelector('[data-process="original"]').classList.add('active');
+                    currentProcess = 'original';
+                    paramsDiv.innerHTML = configs['original']();
+                    processImage();
+                }
+            } else {
+                btn.classList.remove('pdi-process-disabled');
+            }
+        });
     }
 
 });

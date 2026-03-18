@@ -10,7 +10,6 @@ def home(request):
     return render(request, 'home.html')
 
 def carregar_imagem(request):
-    """Recebe a imagem original e retorna só o histograma dela."""
     if request.method != 'POST' or not request.FILES.get('image'):
         return JsonResponse({'error': 'Requisição inválida'}, status=400)
 
@@ -24,16 +23,17 @@ def carregar_imagem(request):
             )
 
         img = decode_image(file)
+        histogram = _generate_histogram(img)
 
         return JsonResponse({
-            'histogram': _generate_histogram(img),
+            'histogram': histogram,
+            'is_grayscale': 'gray' in histogram,  # ← ADICIONAR ISSO
         })
 
     except ValueError as e:
         return JsonResponse({'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 
 def processar_imagem(request):
