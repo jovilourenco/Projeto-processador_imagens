@@ -5,7 +5,7 @@ from .geral import gray_scale
 
 def threshold(img: np.ndarray, **params) -> np.ndarray:
     k = int(params.get('k', 127))
-    gray = gray_scale(img)
+    gray = img if len(img.shape) == 2 else gray_scale(img)
     _, result = cv2.threshold(gray, k, 255, cv2.THRESH_BINARY)
     return result
 
@@ -30,16 +30,17 @@ def power_transform(img: np.ndarray, **params) -> np.ndarray:
 
 def equalize_histogram(img: np.ndarray, **params) -> np.ndarray:
     """Equaliza no canal Y (YCrCb) para preservar as cores."""
-    gray_img = gray_scale(img)
+    gray_img = img if len(img.shape) == 2 else gray_scale(img)
     return cv2.equalizeHist(gray_img)
 
 
 def intensity_slicing(img: np.ndarray, **params) -> np.ndarray:
     a           = int(params.get('low', 100))
-    b          = int(params.get('high', 200))
+    b           = int(params.get('high', 200))
     preserve_bg = str(params.get('preserve_bg', 'false')).lower() == 'true'
 
-    gray = gray_scale(img)
+    gray = img if len(img.shape) == 2 else gray_scale(img)
+
     mask = (gray >= a) & (gray <= b)
 
     if preserve_bg:
