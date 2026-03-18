@@ -1,4 +1,4 @@
-from .geral import original, negative
+from .geral import original, negative, gray_scale
 from .intensidade import (
     threshold, log_transform, power_transform,
     equalize_histogram, intensity_slicing
@@ -19,6 +19,7 @@ FILTERS = {
     # Geral
     "original":          original,
     "negative":          negative,
+    "gray_scale":        gray_scale,
     # Decomposição
     "rgb":               rgb_channels,
     "hsv":               hsv_channels,

@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // === GERAL ===
         'original': () => `<p class="text-white mb-0">Exibindo imagem original.</p>`,
         'negative': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
+        'gray_scale': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
         
         // === DECOMPOSIÇÃO ===
         'rgb': () => `<p class="text-white mb-0">Nenhum parâmetro necessário.</p>`,
