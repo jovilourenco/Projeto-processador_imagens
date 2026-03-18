@@ -55,6 +55,12 @@ def processar_imagem(request):
         params = json.loads(request.POST.get('params', '{}'))
         output = process(img, process_type, params)
 
+        # Decomposição: retorna canais separados
+        if output.get('channels'):
+            return JsonResponse({
+                'channels': output['channels'],
+            })
+
         return JsonResponse({
             'image_out':  encode_image(output['result']),
             'histogram':  output['histogram'],

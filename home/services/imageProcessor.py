@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from ..filters import FILTERS
+from ..utils.imageUtils import encode_image
 
 def process(img: np.ndarray, process_type: str, params: dict) -> dict:
     """
@@ -13,6 +14,21 @@ def process(img: np.ndarray, process_type: str, params: dict) -> dict:
         raise ValueError(f"Filtro desconhecido: '{process_type}'")
 
     result = filter_fn(img, **params)
+
+     # Resultado de decomposição: múltiplos canais
+    if isinstance(result, dict) and 'channels' in result:
+        channels_out = []
+        for ch in result['channels']:
+            channels_out.append({
+                'label': ch['label'],
+                'image': encode_image(ch['data']),
+            })
+        return {
+            'result':   None,
+            'histogram': {},
+            'channels': channels_out,
+        }
+
     histogram = _generate_histogram(result)
 
     return {

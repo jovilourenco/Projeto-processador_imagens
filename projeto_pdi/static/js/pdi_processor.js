@@ -360,7 +360,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const data = await response.json();
 
+            // Imagem original -> Imagem processada: renderiza 3 canais lado a lado
+            if (data.channels) {
+                renderChannels(data.channels);
+                return;
+            }
+
+            // Imagem original -> Imagem processada
             if (data.image_out) {
+                restoreOutputPanel()
                 imgOut.src = "data:image/png;base64," + data.image_out;
                 imgOut.classList.remove('d-none');
                 document.getElementById('placeholderOutput').classList.add('d-none');
@@ -477,6 +485,49 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (err) {
             console.error('Erro ao carregar histograma original:', err);
         }
+    }
+
+    function renderChannels(channels) {
+        const panel = document.getElementById('panelOutput') || imgOut.closest('.pdi-image-panel');
+        const wrap = imgOut.closest('.pdi-canvas-wrap');
+
+        // Esconde a imagem única padrão
+        imgOut.classList.add('d-none');
+        document.getElementById('placeholderOutput').classList.add('d-none');
+
+        // Remove renderização anterior de canais se houver
+        const existing = wrap.querySelector('.pdi-channels-row');
+        if (existing) existing.remove();
+
+        // Cria a linha com os 3 canais
+        const row = document.createElement('div');
+        row.className = 'pdi-channels-row';
+
+        channels.forEach(ch => {
+            const col = document.createElement('div');
+            col.className = 'pdi-channel-col';
+
+            const label = document.createElement('span');
+            label.className = 'pdi-channel-label';
+            label.textContent = ch.label;
+
+            const img = document.createElement('img');
+            img.src = 'data:image/png;base64,' + ch.image;
+            img.className = 'pdi-channel-img';
+            img.alt = ch.label;
+
+            col.appendChild(label);
+            col.appendChild(img);
+            row.appendChild(col);
+        });
+
+        wrap.appendChild(row);
+    }
+
+    function restoreOutputPanel() {
+        const wrap = imgOut.closest('.pdi-canvas-wrap');
+        const existing = wrap.querySelector('.pdi-channels-row');
+        if (existing) existing.remove();
     }
 
     function setOutputLoader(visible) {
