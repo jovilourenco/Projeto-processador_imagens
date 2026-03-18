@@ -158,10 +158,10 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <label class="form-label small">Janela máxima (smax):
-                        <input type="number" min="3" max="21" step="2" id="val_smax" class="pdi-ctrl" value="7"
+                        <input type="number" min="3" max="11" step="2" id="val_smax" class="pdi-ctrl" value="7"
                             oninput="document.getElementById('param_smax').value = this.value">
                     </label>
-                    <input type="range" class="form-range pdi-ctrl" id="param_smax" min="3" max="21" step="2" value="7"
+                    <input type="range" class="form-range pdi-ctrl" id="param_smax" min="3" max="11" step="2" value="7"
                         oninput="document.getElementById('val_smax').value = this.value">
                 </div>
             </div>`,
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
             canvas = document.createElement('canvas');
             canvas.id = canvasId;
             canvas.width = 256;
-            canvas.height = 100;
+            canvas.height = 50;
             canvas.style.width = '100%';
             box.appendChild(canvas);
         }
