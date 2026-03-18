@@ -739,7 +739,7 @@
 /* Garante que a regra global de max-height não afete as imagens de canal */
 .pdi-canvas-wrap.pdi-channels-mode img {
     max-height: unset;
-    width: 100%;
+    width: 80%;
     height: auto;
 }
 

@@ -327,8 +327,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (loaderIn) loaderIn.classList.add('d-none'); // ESCONDE O LOADER
 
+                // ← RESET: volta sempre para "original" ao carregar nova imagem
+                const activeBtn = document.querySelector('#processSelector .active');
+                if (activeBtn) activeBtn.classList.remove('active');
+                document.querySelector('[data-process="original"]').classList.add('active');
+                currentProcess = 'original';
+                paramsDiv.innerHTML = configs['original']();
+                restoreOutputPanel(); // limpa canais de decomposição se houver
+
                 await loadOriginalHistogram(imageInput.files[0]);
-                
                 processImage();
             };
             reader.readAsDataURL(file);
@@ -363,6 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Imagem original -> Imagem processada: renderiza 3 canais lado a lado
             if (data.channels) {
                 renderChannels(data.channels);
+                // Deixa o histograma processado como nada
+                renderHistogram('histOutput', {}, 1);
+
                 return;
             }
 

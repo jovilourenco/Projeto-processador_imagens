@@ -4,10 +4,6 @@ from ..filters import FILTERS
 from ..utils.imageUtils import encode_image
 
 def process(img: np.ndarray, process_type: str, params: dict) -> dict:
-    """
-    Orquestra o pipeline de processamento.
-    Retorna dict com 'result' (np.ndarray) e 'histogram' (lista por canal).
-    """
     filter_fn = FILTERS.get(process_type)
 
     if filter_fn is None:
@@ -15,7 +11,7 @@ def process(img: np.ndarray, process_type: str, params: dict) -> dict:
 
     result = filter_fn(img, **params)
 
-     # Resultado de decomposição: múltiplos canais
+    # Resultado multi-canal (decomposição, laplaciano, etc.)
     if isinstance(result, dict) and 'channels' in result:
         channels_out = []
         for ch in result['channels']:
@@ -24,7 +20,7 @@ def process(img: np.ndarray, process_type: str, params: dict) -> dict:
                 'image': encode_image(ch['data']),
             })
         return {
-            'result':   None,
+            'result': None,
             'histogram': {},
             'channels': channels_out,
         }
@@ -34,23 +30,16 @@ def process(img: np.ndarray, process_type: str, params: dict) -> dict:
     return {
         "result": result,
         "histogram": histogram,
+        'channels': None,
     }
 
-def generate_histogram_only(img: np.ndarray) -> dict:
-    """Exposto para a view de carregamento — gera histograma sem processar."""
-    return _generate_histogram(img)
-
-
 def _generate_histogram(img: np.ndarray) -> dict:
-
     histograms = {}
 
     if len(img.shape) == 2:
-        # Imagem em escala de cinza
         hist = cv2.calcHist([img], [0], None, [256], [0, 256])
         histograms["gray"] = hist.flatten().tolist()
     else:
-        # Imagem colorida (BGR)
         for i, canal in enumerate(["b", "g", "r"]):
             hist = cv2.calcHist([img], [i], None, [256], [0, 256])
             histograms[canal] = hist.flatten().tolist()
