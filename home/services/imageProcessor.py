@@ -33,12 +33,10 @@ def _generate_histogram(img: np.ndarray) -> dict:
         # Imagem em escala de cinza
         hist = cv2.calcHist([img], [0], None, [256], [0, 256])
         histograms["gray"] = hist.flatten().tolist()
-        print("EC")
     else:
         # Imagem colorida (BGR)
         for i, canal in enumerate(["b", "g", "r"]):
             hist = cv2.calcHist([img], [i], None, [256], [0, 256])
             histograms[canal] = hist.flatten().tolist()
-        print("RGB")
 
     return histograms
