@@ -103,7 +103,7 @@ A aplicação é totalmente funcional no navegador, com visualização em tempo 
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/Projeto-processador_imagens.git
+git clone https://github.com/jovilourenco/Projeto-processador_imagens
 cd Projeto-processador_imagens
 ```
 
