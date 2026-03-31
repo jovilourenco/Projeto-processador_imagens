@@ -9,6 +9,10 @@
 
     btnReset.addEventListener('click', function() {
 
+        // Esconder botão de aplicar filtro no reset
+        const btnApplyFilter = document.getElementById('btnApplyFilter');
+        if (btnApplyFilter) btnApplyFilter.classList.add('d-none');
+
         // Limpa input file
         if (imageInput) imageInput.value = '';
 

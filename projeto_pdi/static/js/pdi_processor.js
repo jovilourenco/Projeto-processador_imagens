@@ -342,6 +342,53 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // --- LÓGICA DO BOTÃO APLICAR FILTRO ---
+    const btnApplyFilter = document.getElementById('btnApplyFilter');
+
+    // Função auxiliar para converter Base64 para File
+    function dataURLtoFile(dataurl, filename) {
+        let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    }
+
+    // Ação ao clicar em Aplicar Filtro
+    btnApplyFilter?.addEventListener('click', async () => {
+        const imgOutSrc = document.getElementById('imgOutput').src;
+        if (!imgOutSrc || !imgOutSrc.startsWith('data:image/')) return;
+
+        // Converter a imagem final de volta para um arquivo
+        const file = dataURLtoFile(imgOutSrc, 'imagem_empilhada.png');
+        
+        // Inserir esse arquivo no input file original usando DataTransfer
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
+
+        // Substituir visualmente a Imagem Original pela Processada
+        imgIn.src = imgOutSrc;
+        document.getElementById('metaInput').innerHTML = document.getElementById('metaOutput').innerHTML;
+        
+        // Recarregar o histograma da "nova" imagem original via backend
+        await loadOriginalHistogram(file);
+
+        // 5. Resetar a interface para o processo "Original"
+        const activeBtn = document.querySelector('#processSelector .active');
+        if (activeBtn) activeBtn.classList.remove('active');
+        document.querySelector('[data-process="original"]').classList.add('active');
+        currentProcess = 'original';
+        paramsDiv.innerHTML = configs['original']();
+        
+        // Esconder o próprio botão
+        btnApplyFilter.classList.add('d-none');
+        
+        // Processar para espelhar a saída e os histogramas
+        processImage();
+    });
+
     async function processImage() {
     if (!imageInput.files[0]) return;
 
@@ -385,6 +432,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.histogram) {
                     renderHistogram('histOutput', data.histogram, 1);
+                }
+                // Visibilidade do botão de aplicar filtro
+                if (btnApplyFilter) {
+                    if (currentProcess !== 'original') {
+                        btnApplyFilter.classList.remove('d-none');
+                    } else {
+                        btnApplyFilter.classList.add('d-none');
+                    }
                 }
             }
         } catch (err) {
