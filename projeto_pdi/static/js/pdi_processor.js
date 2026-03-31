@@ -18,6 +18,29 @@ if (document.readyState === 'complete') {
 // 2. LÓGICA PRINCIPAL DA APLICAÇÃO (Processamento Digital de Imagens)
 document.addEventListener('DOMContentLoaded', function() {
     let currentProcess = 'original';
+
+    // VARIÁVEIS DE HISTÓRICO 
+    const MAX_HISTORY = 10; // Limite para não estourar a memória do navegador
+    let imageHistory = [];
+    let historyIndex = -1;
+
+    function saveHistoryState(dataUrl) {
+        // Se o usuário deu Ctrl+Z e depois aplicou um NOVO filtro, 
+        // nós descartamos o futuro alternativo (tudo que estava à frente do index atual)
+        if (historyIndex < imageHistory.length - 1) {
+            imageHistory = imageHistory.slice(0, historyIndex + 1);
+        }
+        
+        imageHistory.push(dataUrl);
+        
+        // Mantém a pilha dentro do limite
+        if (imageHistory.length > MAX_HISTORY) {
+            imageHistory.shift(); // Remove o elemento mais antigo do início do array
+        } else {
+            historyIndex++;
+        }
+    }
+
     const imageInput = document.getElementById('imageInput');
     const imgIn = document.getElementById('imgInput');
     const imgOut = document.getElementById('imgOutput');
@@ -50,6 +73,59 @@ document.addEventListener('DOMContentLoaded', function() {
             atualizarMetaDados(imgOut, 'metaOutput');
         }
     };
+
+    // LÓGICA DE DESFAZER / REFAZER 
+    document.addEventListener('keydown', async function(e) {
+        // Ignora se o modal de upload estiver aberto ou se não houver histórico
+        if (document.body.classList.contains('modal-open') || imageHistory.length === 0) return;
+
+        // Ctrl + Z (Desfazer)
+        if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                await restoreState(imageHistory[historyIndex]);
+            }
+        }
+
+        // Ctrl + Y (Refazer)
+        if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+            e.preventDefault();
+            if (historyIndex < imageHistory.length - 1) {
+                historyIndex++;
+                await restoreState(imageHistory[historyIndex]);
+            }
+        }
+    });
+
+    // Função que reconstrói a tela de acordo com o passo no histórico
+    async function restoreState(dataUrl) {
+        imgIn.src = dataUrl;
+        
+        // Converte de volta para File para o backend conseguir ler
+        const file = dataURLtoFile(dataUrl, 'historico.png');
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
+
+        // Atualiza os metadados visuais
+        atualizarMetaDados(imgIn, 'metaInput', file); 
+        
+        // Recarrega o histograma daquele estado
+        await loadOriginalHistogram(file);
+
+        // Reseta a interface visual para "Original" para mostrar limpo
+        const activeBtn = document.querySelector('#processSelector .active');
+        if (activeBtn) activeBtn.classList.remove('active');
+        document.querySelector('[data-process="original"]').classList.add('active');
+        currentProcess = 'original';
+        paramsDiv.innerHTML = configs['original']();
+        
+        if (btnApplyFilter) btnApplyFilter.classList.add('d-none');
+        
+        // Processa a imagem para exibir a saída corretamente
+        processImage();
+    }
 
     // Configuração de controles por processo
     const configs = {
@@ -320,6 +396,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 imgIn.src = e.target.result;
+
+                imageHistory = [];
+                historyIndex = -1;
+                saveHistoryState(e.target.result);
+
                 imgIn.classList.remove('d-none');
                 // Não mostra o cursor para adicionar foto no 'imagem original'
                 panelInput.style.cursor = 'default';
@@ -371,6 +452,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Substituir visualmente a Imagem Original pela Processada
         imgIn.src = imgOutSrc;
         document.getElementById('metaInput').innerHTML = document.getElementById('metaOutput').innerHTML;
+
+        saveHistoryState(imgOutSrc)
         
         // Recarregar o histograma da "nova" imagem original via backend
         await loadOriginalHistogram(file);
