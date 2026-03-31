@@ -149,8 +149,10 @@ http://000.0.0.0:8000/
 3. **Escolha um Processo**: Na barra lateral esquerda, navegue pelas categorias e clique em um filtro
 4. **Ajuste Parâmetros**: Quando disponível, ajuste os parâmetros do filtro
 5. **Visualize o Resultado**: A imagem processada e seu histograma aparecem instantaneamente
-6. **Salve o Resultado**: Clique em "Salvar resultado" para baixar a imagem processada
-7. **Resetar**: Clique em "Resetar" para limpar todas as modificações
+6. **Aplique o Filtro**: Ao aplicar o filtro a imagem processada passa a ser a imagem original, assim você pode aplicar vários filtros a imagem.
+7. **Retroceder e Avançar**: Você pode voltar (CTRL+Z) e avançar (CTRL+Y) os processos aplicados à imagem.
+8. **Salve o Resultado**: Clique em "Salvar resultado" para baixar a imagem processada
+9. **Resetar**: Clique em "Resetar" para limpar todas as modificações
 
 ---
 
