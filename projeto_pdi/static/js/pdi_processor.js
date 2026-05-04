@@ -629,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             setDecompositionEnabled(!data.is_grayscale);
+            setNameNegative(!data.is_grayscale)
 
         } catch (err) {
             console.error('Erro ao carregar histograma original:', err);
@@ -698,6 +699,21 @@ document.addEventListener('DOMContentLoaded', function() {
             loaderOut.classList.add('d-none');
         }
     }
+
+    function setNameNegative(enabled){
+    // Pega o botão com base no nome dele
+    const negativeButton = document.querySelector('.pdi-process-item[data-process="negative"]');
+    
+    if (negativeButton) {
+        if (enabled) {
+            // Quando a imagem é colorida o nome fica como "complemento" da imagem
+            negativeButton.textContent = "Complemento (Negativo)";
+        } else {
+            // Quando em escala de cinza fica somente como negativo 
+            negativeButton.textContent = "Negativo";
+        }
+    }
+}
 
     function setDecompositionEnabled(enabled) {
         const decompositionContainer = document.getElementById('cat-decomp');
