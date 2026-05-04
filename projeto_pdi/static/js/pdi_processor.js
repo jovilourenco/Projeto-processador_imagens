@@ -96,6 +96,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 await restoreState(imageHistory[historyIndex]);
             }
         }
+
+
+        // Ctrl + S (Aplicar filtro)
+        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+
+            // evita aplicar sem imagem processada
+            const imgOutSrc = imgOut.src;
+            if (!imgOutSrc || !imgOutSrc.startsWith('data:image/')) return;
+
+            // simula clique no botão
+            btnApplyFilter?.click();
+        }
     });
 
     // Função que reconstrói a tela de acordo com o passo no histórico
